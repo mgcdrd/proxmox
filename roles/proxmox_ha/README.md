@@ -58,12 +58,31 @@ pick based on your cluster's PVE version:
 Role Variables
 ---------------
 
+### Variable reference
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `proxmox_ha_do_info` | `false` | No | Run the `info` section (tag `info`) — no info module for groups/resources) |
+| `proxmox_ha_do_group` | `false` | No | Run the `group` section (tag `group`) — deprecated on PVE 9.0+, still works) |
+| `proxmox_ha_do_resource` | `false` | No | Run the `resource` section (tag `resource`) |
+| `proxmox_ha_do_rule` | `false` | No | Run the `rule` section (tag `rule`) |
+| `proxmox_ha_groups` | `[]` | If `proxmox_ha_do_group` | Legacy HA groups (PVE < 9.0, or back-compat); deprecated in favor of node-affinity rules from 9.0 |
+| `proxmox_ha_resources` | `[]` | If `proxmox_ha_do_resource` | VMs/CTs placed under HA management; works with groups and rules |
+| `proxmox_ha_rules` | `[]` | If `proxmox_ha_do_rule` | PVE 9.0+ node-affinity and resource-affinity rules |
+| `proxmox_ha_info_rule` | `""` | No | Rule ID to query |
+| `proxmox_ha_info_type` | `""` | No | Filter rules by type: `node-affinity` or `resource-affinity` |
+| `proxmox_ha_info_resource` | `""` | No | Only rules affecting this resource ID (e.g. `vm:100`) |
+
+
 ### Connection
 
 Every `proxmox_*` role in this collection uses the same `proxmox_api_*`
 vars — see `collections/infrabase/README.md`. Set them once for the whole
 play/inventory; a VM/CT lives on one node in one cluster, so there's
 nothing role-specific to override here.
+
+The roles hand these to the `community.proxmox` modules through `module_defaults`
+(see `collections/infrabase/README.md`), so tasks here don't repeat them.
 
 ```yaml
 proxmox_api_host: "pve2.example.com"

@@ -58,12 +58,41 @@ plus `Sys.Modify` on `/` for `job` (job CRUD requires cluster-wide modify).
 Role Variables
 ---------------
 
+### Variable reference
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `proxmox_backup_do_info` | `false` | No | Run the `info` section (tag `info`) |
+| `proxmox_backup_do_job` | `false` | No | Run the `job` section (tag `job`) — see README) |
+| `proxmox_backup_do_membership` | `false` | No | Run the `membership` section (tag `membership`) |
+| `proxmox_backup_do_run` | `false` | No | Run the `run` section (tag `run`) |
+| `proxmox_backup_info_vm_name` | `""` | No | VM name to query backup membership for; mutually exclusive with `_vm_id` and `_jobs` |
+| `proxmox_backup_info_vm_id` | `""` | No | VMID to query backup membership for; mutually exclusive with `_vm_name` and `_jobs` |
+| `proxmox_backup_info_jobs` | `false` | No | Return the raw job list |
+| `proxmox_backup_jobs` | `[]` | If `proxmox_backup_do_job` | Scheduled backup jobs (cron, retention, storage), managed through the `/cluster/backup` API; needs API-token auth |
+| `proxmox_backup_membership` | `[]` | If `proxmox_backup_do_membership` | Toggle a VM's presence in an existing job; `backup_id` is needed even for `state: present` |
+| `proxmox_backup_run_mode` | `"include"` | No | How to pick guests for the on-demand run: `include` (by VMID), `pool`, or `all`. Not idempotent, it always starts a new task |
+| `proxmox_backup_run_storage` | `""` | No | Target storage for the run |
+| `proxmox_backup_run_vmids` | `[]` | If `mode: include` | VMIDs to back up |
+| `proxmox_backup_run_pool` | `""` | If `mode: pool` | Pool whose guests are backed up |
+| `proxmox_backup_run_backup_mode` | `"snapshot"` | No | `snapshot`, `suspend`, or `stop` |
+| `proxmox_backup_run_compress` | `""` | No | Compression for the run (e.g. `zstd`) |
+| `proxmox_backup_run_description` | `""` | No | Notes attached to the backup |
+| `proxmox_backup_run_retention` | `""` | No | Retention override for this run only |
+| `proxmox_backup_run_wait` | `false` | No | Poll until the backup task completes |
+| `proxmox_backup_run_wait_timeout` | `10` | No | Minutes to wait when `proxmox_backup_run_wait` is true |
+
+
 ### Connection
 
 Every `proxmox_*` role in this collection uses the same `proxmox_api_*`
 vars — see `collections/infrabase/README.md`. Set them once for the whole
 play/inventory; a VM/CT lives on one node in one cluster, so there's
 nothing role-specific to override here.
+
+The roles hand these to the `community.proxmox` modules through `module_defaults`
+(see `collections/infrabase/README.md`), so tasks here don't repeat them. The `uri`-based job
+section reads `proxmox_api_*` directly.
 
 ```yaml
 proxmox_api_host: "pve2.example.com"

@@ -39,12 +39,29 @@ at minimum.
 Role Variables
 ---------------
 
+### Variable reference
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `proxmox_pool_do_pool` | `false` | No | Run the `pool` section (tag `pool`) |
+| `proxmox_pool_do_member` | `false` | No | Run the `member` section (tag `member`) |
+| `proxmox_pool_pools` | `[]` | If `proxmox_pool_do_pool` | Pools to create or delete; items mirror `community.proxmox.proxmox_pool` |
+| `proxmox_pool_poolid` | `""` | If `proxmox_pool_do_member` | Pool whose membership is managed |
+| `proxmox_pool_members` | `[]` | If `proxmox_pool_do_member` | Members, each `{vm: <vmid-or-name>}` or `{storage: <name>}` |
+| `proxmox_pool_member_state` | `"present"` | No | `present` adds the members, `absent` removes them |
+| `proxmox_pool_exclusive` | `false` | No | Reconcile membership to exactly match `proxmox_pool_members` |
+| `proxmox_pool_allow_move` | `false` | No | Allow adding a guest that is already in another pool |
+
+
 ### Connection
 
 Every `proxmox_*` role in this collection uses the same `proxmox_api_*`
 vars — see `collections/infrabase/README.md`. Set them once for the whole
 play/inventory; a VM/CT lives on one node in one cluster, so there's
 nothing role-specific to override here.
+
+The roles hand these to the `community.proxmox` modules through `module_defaults`
+(see `collections/infrabase/README.md`), so tasks here don't repeat them.
 
 ```yaml
 proxmox_api_host: "pve2.example.com"

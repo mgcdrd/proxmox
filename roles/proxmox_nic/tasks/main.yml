@@ -1,15 +1,25 @@
 ---
-- name: proxmox_nic - fail if no interfaces defined
-  ansible.builtin.fail:
-    msg: "proxmox_nic_interfaces must contain at least one entry."
-  when: proxmox_nic_interfaces | length == 0
-  tags: [proxmox_nic, network]
+- name: proxmox_nic - run with shared API connection defaults
+  module_defaults:
+    group/community.proxmox.proxmox:
+      api_host: "{{ proxmox_api_host }}"
+      api_user: "{{ proxmox_api_user }}"
+      api_password: "{{ proxmox_api_password | default(omit) }}"
+      api_token_id: "{{ proxmox_api_token_id | default(omit) }}"
+      api_token_secret: "{{ proxmox_api_token_secret | default(omit) }}"
+      validate_certs: "{{ proxmox_validate_certs }}"
+  block:
+    - name: proxmox_nic - fail if no interfaces defined
+      ansible.builtin.fail:
+        msg: "proxmox_nic_interfaces must contain at least one entry."
+      when: proxmox_nic_interfaces | length == 0
+      tags: [proxmox_nic, network]
 
-- name: proxmox_nic - discover VM in ProxMox
-  import_tasks: discover.yml
-  when: not proxmox_nic_vmid
-  tags: [proxmox_nic, network]
+    - name: proxmox_nic - discover VM in ProxMox
+      ansible.builtin.import_tasks: discover.yml
+      when: not proxmox_nic_vmid
+      tags: [proxmox_nic, network]
 
-- name: proxmox_nic - configure NICs
-  import_tasks: nic.yml
-  tags: [proxmox_nic, network]
+    - name: proxmox_nic - configure NICs
+      ansible.builtin.import_tasks: nic.yml
+      tags: [proxmox_nic, network]

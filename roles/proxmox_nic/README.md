@@ -47,12 +47,24 @@ A token needs at least `VM.Config.Network` on the relevant path.
 Role Variables
 ---------------
 
+### Variable reference
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `proxmox_nic_vm_name` | *(`proxmox_target_vm_name`, else `inventory_hostname`)* | No | VM to act on; looked up by name to find its VMID |
+| `proxmox_nic_vmid` | `""` | No | VMID; set to skip the by-name lookup (e.g. right after a `proxmox_vm` clone) |
+| `proxmox_nic_interfaces` | `[]` | Yes | NICs to manage, one per slot (`net0` to `net31`); fields below |
+
+
 ### Connection
 
 Every `proxmox_*` role in this collection uses the same `proxmox_api_*`
 vars — see `collections/infrabase/README.md`. Set them once for the whole
 play/inventory; a VM/CT lives on one node in one cluster, so there's
 nothing role-specific to override here.
+
+The roles hand these to the `community.proxmox` modules through `module_defaults`
+(see `collections/infrabase/README.md`), so tasks here don't repeat them.
 
 ```yaml
 proxmox_api_host: "pve2.example.com"   # any PVE node or the cluster VIP

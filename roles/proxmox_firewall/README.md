@@ -73,12 +73,48 @@ Unset `vault_*` variables resolve to `omit`. Grant the token
 Role Variables
 ---------------
 
+### Variable reference
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `proxmox_firewall_do_info` | `false` | No | Run the `info` section (tag `info`) |
+| `proxmox_firewall_do_cluster_options` | `false` | No | Run the `cluster_options` section (tag `cluster_options`) |
+| `proxmox_firewall_do_node_options` | `false` | No | Run the `node_options` section (tag `node_options`) |
+| `proxmox_firewall_do_rule` | `false` | No | Run the `rule` section (tag `rule`) |
+| `proxmox_firewall_do_group` | `false` | No | Run the `group` section (tag `group`) |
+| `proxmox_firewall_do_alias` | `false` | No | Run the `alias` section (tag `alias`) |
+| `proxmox_firewall_do_ipset` | `false` | No | Run the `ipset` section (tag `ipset`) |
+| `proxmox_firewall_info_level` | `"cluster"` | No | Scope to read rules/groups/aliases/ipsets from: `cluster`, `node`, `vm`, `vnet`, or `group` |
+| `proxmox_firewall_info_node` | `""` | If `level: node` | Node name |
+| `proxmox_firewall_info_vmid` | `""` | If `level: vm` | VMID |
+| `proxmox_firewall_info_vnet` | `""` | If `level: vnet` | Vnet name |
+| `proxmox_firewall_info_group` | `""` | If `level: group` | Security group name |
+| `proxmox_firewall_info_node_options_target` | `""` | No | Node to read firewall options from; empty skips the lookup |
+| `proxmox_firewall_cluster_state` | `"disabled"` | No | Cluster-wide firewall `enabled`/`disabled` |
+| `proxmox_firewall_cluster_ebtables` | `true` | No | Enable ebtables rules cluster-wide |
+| `proxmox_firewall_cluster_input_policy` | `"DROP"` | No | Default inbound policy: `ACCEPT`, `REJECT`, or `DROP` |
+| `proxmox_firewall_cluster_output_policy` | `"ACCEPT"` | No | Default outbound policy: `ACCEPT`, `REJECT`, or `DROP` |
+| `proxmox_firewall_cluster_forward_policy` | `"ACCEPT"` | No | Default forward policy: `ACCEPT` or `DROP` |
+| `proxmox_firewall_cluster_log_ratelimit` | `{}` | No | Firewall log rate-limit settings (`enable`, `rate`, `burst`) |
+| `proxmox_firewall_node_options` | `[]` | If `proxmox_firewall_do_node_options` | Per-node firewall enable, logging, and protocol hardening |
+| `proxmox_firewall_rules` | `[]` | If `proxmox_firewall_do_rule` | Rules at cluster, group, vnet, node, or VM level; the module has no check/diff mode |
+| `proxmox_firewall_groups` | `[]` | If `proxmox_firewall_do_group` | Security groups, name only (rule content inside a group is not managed here) |
+| `proxmox_firewall_aliases` | `[]` | If `proxmox_firewall_do_alias` | Cluster or VM-level aliases |
+| `proxmox_firewall_ipsets` | `[]` | If `proxmox_firewall_do_ipset` | Cluster-level IP sets |
+
+
 ### Connection
 
 Every `proxmox_*` role in this collection uses the same `proxmox_api_*`
 vars — see `collections/infrabase/README.md`. Set them once for the whole
 play/inventory; a VM/CT lives on one node in one cluster, so there's
 nothing role-specific to override here.
+
+The roles hand these to the `community.proxmox` modules through `module_defaults`
+(see `collections/infrabase/README.md`), so tasks here don't repeat them. The three tasks calling
+`proxmox_cluster_firewall_options`, `proxmox_node_firewall_options` and
+`proxmox_node_firewall_options_info` still pass them explicitly: those modules
+are not in the `community.proxmox` 2.0.0 action group (or module list).
 
 ```yaml
 proxmox_api_host: "pve2.example.com"

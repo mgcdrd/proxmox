@@ -74,12 +74,31 @@ Unset `vault_*` variables resolve to `omit`. Grant the token
 Role Variables
 ---------------
 
+### Variable reference
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `proxmox_ceph_do_mon` | `false` | No | Run the `mon` section (tag `mon`) |
+| `proxmox_ceph_do_mgr` | `false` | No | Run the `mgr` section (tag `mgr`) |
+| `proxmox_ceph_do_mds` | `false` | No | Run the `mds` section (tag `mds`) |
+| `proxmox_ceph_do_osd` | `false` | No | Run the `osd` section (tag `osd`) |
+| `proxmox_ceph_do_pool` | `false` | No | Run the `pool` section (tag `pool`) |
+| `proxmox_ceph_mons` | `[]` | If `proxmox_ceph_do_mon` | Ceph monitor daemons, one per node |
+| `proxmox_ceph_mgrs` | `[]` | If `proxmox_ceph_do_mgr` | Ceph manager daemons (create/delete only, no active/standby control) |
+| `proxmox_ceph_mds` | `[]` | If `proxmox_ceph_do_mds` | Ceph metadata servers (for CephFS) |
+| `proxmox_ceph_osds` | `[]` | If `proxmox_ceph_do_osd` | OSDs with full lifecycle control (`state`: `present`, `absent`, `in`, `out`, `scrub`, `start`, `stop`, `restart`); `dev` is needed to create |
+| `proxmox_ceph_pools` | `[]` | If `proxmox_ceph_do_pool` | Ceph pools; updated in place idempotently |
+
+
 ### Connection
 
 Every `proxmox_*` role in this collection uses the same `proxmox_api_*`
 vars — see `collections/infrabase/README.md`. Set them once for the whole
 play/inventory; a VM/CT lives on one node in one cluster, so there's
 nothing role-specific to override here.
+
+The roles hand these to the `community.proxmox` modules through `module_defaults`
+(see `collections/infrabase/README.md`), so tasks here don't repeat them.
 
 ```yaml
 proxmox_api_host: "pve2.example.com"

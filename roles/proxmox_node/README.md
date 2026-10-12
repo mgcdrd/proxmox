@@ -61,12 +61,37 @@ Unset `vault_*` variables resolve to `omit`. Grant the token `Sys.Modify` +
 Role Variables
 ---------------
 
+### Variable reference
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `proxmox_node_do_info` | `false` | No | Run the `info` section (tag `info`) |
+| `proxmox_node_do_power` | `false` | No | Run the `power` section (tag `power`) |
+| `proxmox_node_do_config` | `false` | No | Run the `config` section (tag `config`) |
+| `proxmox_node_do_task` | `false` | No | Run the `task` section (tag `task`) |
+| `proxmox_node_target` | `""` | If `proxmox_node_do_power` | Node to wake or shut down; the module has no reboot and no target-MAC parameter |
+| `proxmox_node_power_state` | `""` | If `proxmox_node_do_power` | `online` (wake-on-LAN) or `offline` (shutdown) |
+| `proxmox_node_config_target` | `""` | If `proxmox_node_do_config` | Node whose certificates, DNS, or subscription are configured |
+| `proxmox_node_certificates` | `{}` | No | Certificate settings: `certificate_file_path` or `certificate_raw`, plus `private_key_file_path` or `private_key_raw` |
+| `proxmox_node_dns` | `{}` | No | DNS settings: `dns1`, `dns2`, `dns3`, and `search` (required within the dict) |
+| `proxmox_node_subscription` | `{}` | No | Subscription key settings (`key`) |
+| `proxmox_node_task_target` | `""` | If `proxmox_node_do_task` | Node to list or poll tasks on |
+| `proxmox_node_task_upid` | `""` | No | Task UPID to poll; empty lists tasks instead |
+| `proxmox_node_task_source` | `"archive"` | No | `archive` (finished), `active` (running), or `all` |
+| `proxmox_node_task_wait` | `false` | No | Poll `proxmox_node_task_upid` until it has a status |
+| `proxmox_node_task_wait_retries` | `30` | No | Maximum polls when waiting |
+| `proxmox_node_task_wait_delay` | `5` | No | Seconds between polls |
+
+
 ### Connection
 
 Every `proxmox_*` role in this collection uses the same `proxmox_api_*`
 vars — see `collections/infrabase/README.md`. Set them once for the whole
 play/inventory; a VM/CT lives on one node in one cluster, so there's
 nothing role-specific to override here.
+
+The roles hand these to the `community.proxmox` modules through `module_defaults`
+(see `collections/infrabase/README.md`), so tasks here don't repeat them.
 
 ```yaml
 proxmox_api_host: "pve2.example.com"

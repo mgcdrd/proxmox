@@ -56,12 +56,27 @@ A token needs at least `VM.Config.Disk` on the relevant path.
 Role Variables
 --------------
 
+### Variable reference
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `proxmox_disk_vm_name` | *(`proxmox_target_vm_name`, else `inventory_hostname`)* | No | VM to act on; looked up by name to find its VMID and node |
+| `proxmox_disk_slot` | `virtio1` | No | PVE disk slot; for `state: present` it must not already be in use |
+| `proxmox_disk_storage` | `""` | Yes | PVE storage backend for the new disk (e.g. `truenas`, `local-lvm`) |
+| `proxmox_disk_size` | `"400"` | No | Disk size in GiB for a new disk, or the new total size for `resized` |
+| `proxmox_disk_state` | `present` | No | `present` adds a disk in the slot (fails if occupied); `resized` grows the disk already there |
+| `proxmox_disk_boot_devices` | *(list, 1 items)* | No | Boot devices excluded when locating a pre-existing data disk on an idempotent re-run |
+
+
 ### Connection
 
 Every `proxmox_*` role in this collection uses the same `proxmox_api_*`
 vars — see `collections/infrabase/README.md`. Set them once for the whole
 play/inventory; a VM/CT lives on one node in one cluster, so there's
 nothing role-specific to override here.
+
+The roles hand these to the `community.proxmox` modules through `module_defaults`
+(see `collections/infrabase/README.md`), so tasks here don't repeat them.
 
 ```yaml
 proxmox_api_host: "pve2.example.com"

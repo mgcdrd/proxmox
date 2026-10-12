@@ -44,12 +44,36 @@ needed for the sections you use.
 Role Variables
 ---------------
 
+### Variable reference
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `proxmox_access_do_user` | `false` | No | Run the `user` section (tag `user`) |
+| `proxmox_access_do_group` | `false` | No | Run the `group` section (tag `group`) |
+| `proxmox_access_do_role` | `false` | No | Run the `role` section (tag `role`) |
+| `proxmox_access_do_acl` | `false` | No | Run the `acl` section (tag `acl`) |
+| `proxmox_access_do_domain` | `false` | No | Run the `domain` section (tag `domain`) |
+| `proxmox_access_do_domain_sync` | `false` | No | Run the `domain_sync` section (tag `domain_sync`) |
+| `proxmox_access_users` | `[]` | If `proxmox_access_do_user` | PVE users (`userid` includes the realm, e.g. `jdoe@pve`); items mirror `community.proxmox.proxmox_user` |
+| `proxmox_access_groups` | `[]` | If `proxmox_access_do_group` | PVE groups; `comment` is applied only at creation, membership is set from the user side |
+| `proxmox_access_roles` | `[]` | If `proxmox_access_do_role` | Custom PVE IAM roles (privilege sets); `privs` is replaced wholesale on update |
+| `proxmox_access_acls` | `[]` | If `proxmox_access_do_acl` | One ACE per item (`path`, `roleid`, `type`, `ugid`); with `state: absent` only `path` is required and omitted fields widen the removal |
+| `proxmox_access_domains` | `[]` | If `proxmox_access_do_domain` | Auth realms (LDAP/AD/OpenID); `type` and `openid_username_claim` are immutable after creation |
+| `proxmox_access_domain_sync_realm` | `""` | If `proxmox_access_do_domain_sync` | Existing realm to sync |
+| `proxmox_access_domain_sync_scope` | `""` | No | `users`, `groups`, or `both` |
+| `proxmox_access_domain_sync_enable_new` | `""` | No | Enable newly synced users |
+| `proxmox_access_domain_sync_remove_vanished` | `""` | No | What to remove for entries gone from the directory: semicolon list of `acl;properties;entry`, or `none` |
+
+
 ### Connection
 
 Every `proxmox_*` role in this collection uses the same `proxmox_api_*`
 vars — see `collections/infrabase/README.md`. Set them once for the whole
 play/inventory; a VM/CT lives on one node in one cluster, so there's
 nothing role-specific to override here.
+
+The roles hand these to the `community.proxmox` modules through `module_defaults`
+(see `collections/infrabase/README.md`), so tasks here don't repeat them.
 
 ```yaml
 proxmox_api_host: "pve2.example.com"

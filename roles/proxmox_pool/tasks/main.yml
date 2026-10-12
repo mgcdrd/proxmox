@@ -1,10 +1,20 @@
 ---
-- name: proxmox_pool - create/delete pools
-  ansible.builtin.include_tasks: pool.yml
-  when: proxmox_pool_do_pool | bool
-  tags: [proxmox_pool, pool]
+- name: proxmox_pool - run with shared API connection defaults
+  module_defaults:
+    group/community.proxmox.proxmox:
+      api_host: "{{ proxmox_api_host }}"
+      api_user: "{{ proxmox_api_user }}"
+      api_password: "{{ proxmox_api_password | default(omit) }}"
+      api_token_id: "{{ proxmox_api_token_id | default(omit) }}"
+      api_token_secret: "{{ proxmox_api_token_secret | default(omit) }}"
+      validate_certs: "{{ proxmox_validate_certs }}"
+  block:
+    - name: proxmox_pool - create/delete pools
+      ansible.builtin.import_tasks: pool.yml
+      when: proxmox_pool_do_pool | bool
+      tags: [proxmox_pool, pool]
 
-- name: proxmox_pool - manage pool membership
-  ansible.builtin.include_tasks: member.yml
-  when: proxmox_pool_do_member | bool
-  tags: [proxmox_pool, member]
+    - name: proxmox_pool - manage pool membership
+      ansible.builtin.import_tasks: member.yml
+      when: proxmox_pool_do_member | bool
+      tags: [proxmox_pool, member]

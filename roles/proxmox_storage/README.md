@@ -54,12 +54,24 @@ Unset `vault_*` variables resolve to `omit`. Grant the token
 Role Variables
 ---------------
 
+### Variable reference
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `proxmox_storage_do_info` | `false` | No | Run the `info` section (tag `info`) |
+| `proxmox_storage_do_manage` | `false` | No | Run the `manage` section (tag `manage`) |
+| `proxmox_storage_definitions` | `[]` | If `proxmox_storage_do_manage` | Storage backends to create or delete (NFS, CIFS, dir, iSCSI, CephFS, RBD, PBS, ZFS); items mirror `community.proxmox.proxmox_storage` |
+
+
 ### Connection
 
 Every `proxmox_*` role in this collection uses the same `proxmox_api_*`
 vars — see `collections/infrabase/README.md`. Set them once for the whole
 play/inventory; a VM/CT lives on one node in one cluster, so there's
 nothing role-specific to override here.
+
+The roles hand these to the `community.proxmox` modules through `module_defaults`
+(see `collections/infrabase/README.md`), so tasks here don't repeat them.
 
 ```yaml
 proxmox_api_host: "pve2.example.com"

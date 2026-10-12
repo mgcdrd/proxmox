@@ -1,30 +1,40 @@
 ---
-- name: proxmox_access - manage users
-  ansible.builtin.include_tasks: user.yml
-  when: proxmox_access_do_user | bool
-  tags: [proxmox_access, user]
+- name: proxmox_access - run with shared API connection defaults
+  module_defaults:
+    group/community.proxmox.proxmox:
+      api_host: "{{ proxmox_api_host }}"
+      api_user: "{{ proxmox_api_user }}"
+      api_password: "{{ proxmox_api_password | default(omit) }}"
+      api_token_id: "{{ proxmox_api_token_id | default(omit) }}"
+      api_token_secret: "{{ proxmox_api_token_secret | default(omit) }}"
+      validate_certs: "{{ proxmox_validate_certs }}"
+  block:
+    - name: proxmox_access - manage users
+      ansible.builtin.import_tasks: user.yml
+      when: proxmox_access_do_user | bool
+      tags: [proxmox_access, user]
 
-- name: proxmox_access - manage groups
-  ansible.builtin.include_tasks: group.yml
-  when: proxmox_access_do_group | bool
-  tags: [proxmox_access, group]
+    - name: proxmox_access - manage groups
+      ansible.builtin.import_tasks: group.yml
+      when: proxmox_access_do_group | bool
+      tags: [proxmox_access, group]
 
-- name: proxmox_access - manage IAM roles
-  ansible.builtin.include_tasks: role.yml
-  when: proxmox_access_do_role | bool
-  tags: [proxmox_access, role]
+    - name: proxmox_access - manage IAM roles
+      ansible.builtin.import_tasks: role.yml
+      when: proxmox_access_do_role | bool
+      tags: [proxmox_access, role]
 
-- name: proxmox_access - manage ACLs
-  ansible.builtin.include_tasks: acl.yml
-  when: proxmox_access_do_acl | bool
-  tags: [proxmox_access, acl]
+    - name: proxmox_access - manage ACLs
+      ansible.builtin.import_tasks: acl.yml
+      when: proxmox_access_do_acl | bool
+      tags: [proxmox_access, acl]
 
-- name: proxmox_access - manage authentication realms
-  ansible.builtin.include_tasks: domain.yml
-  when: proxmox_access_do_domain | bool
-  tags: [proxmox_access, domain]
+    - name: proxmox_access - manage authentication realms
+      ansible.builtin.import_tasks: domain.yml
+      when: proxmox_access_do_domain | bool
+      tags: [proxmox_access, domain]
 
-- name: proxmox_access - trigger realm directory sync
-  ansible.builtin.include_tasks: domain_sync.yml
-  when: proxmox_access_do_domain_sync | bool
-  tags: [proxmox_access, domain_sync]
+    - name: proxmox_access - trigger realm directory sync
+      ansible.builtin.import_tasks: domain_sync.yml
+      when: proxmox_access_do_domain_sync | bool
+      tags: [proxmox_access, domain_sync]

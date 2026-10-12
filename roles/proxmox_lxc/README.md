@@ -50,12 +50,63 @@ relevant path.
 Role Variables
 ---------------
 
+### Variable reference
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `proxmox_lxc_do_info` | `false` | No | Run the `info` section (tag `info`) |
+| `proxmox_lxc_do_create` | `false` | No | Run the `create` section (tag `create`) |
+| `proxmox_lxc_do_clone` | `false` | No | Run the `clone` section (tag `clone`) |
+| `proxmox_lxc_do_lifecycle` | `false` | No | Run the `lifecycle` section (tag `lifecycle`) |
+| `proxmox_lxc_do_template` | `false` | No | Run the `template` section (tag `template`) |
+| `proxmox_lxc_vmid` | `""` | No | VMID for a new container; empty lets PVE assign the next free one |
+| `proxmox_lxc_node` | `""` | If creating | PVE node to create the container on |
+| `proxmox_lxc_hostname` | `""` | If creating | Container hostname |
+| `proxmox_lxc_ostemplate` | `""` | If creating | Template volume, e.g. `local:vztmpl/rockylinux-9-default_20240523_amd64.tar.xz` |
+| `proxmox_lxc_password` | `"{{ vault_proxmox_lxc_password \| default(omit) }}"` | No | Root password; defaults to `vault_proxmox_lxc_password` when defined |
+| `proxmox_lxc_pool` | `""` | No | Resource pool to place the container in |
+| `proxmox_lxc_storage` | `"local-lvm"` | No | Storage for the root filesystem |
+| `proxmox_lxc_disk_size` | `"8"` | No | Root disk size in GiB (no suffix); combined with storage into `storage:size` |
+| `proxmox_lxc_cores` | `2` | No | CPU cores |
+| `proxmox_lxc_memory` | `1024` | No | Memory in MiB |
+| `proxmox_lxc_swap` | `512` | No | Swap in MiB |
+| `proxmox_lxc_net0` | `"name=eth0,bridge=vmbr0,ip=dhcp"` | No | First NIC definition |
+| `proxmox_lxc_nameserver` | `""` | No | DNS server for the container |
+| `proxmox_lxc_searchdomain` | `""` | No | DNS search domain |
+| `proxmox_lxc_pubkey` | `""` | No | SSH public key content (not a path) for root |
+| `proxmox_lxc_unprivileged` | `true` | No | Create an unprivileged container |
+| `proxmox_lxc_features` | `[]` | No | Feature flags, e.g. `["nesting=1", "keyctl=1"]` |
+| `proxmox_lxc_onboot` | `true` | No | Start the container on node boot |
+| `proxmox_lxc_tags` | `[]` | No | Tags to apply |
+| `proxmox_lxc_create_timeout` | `300` | No | Seconds to wait for creation |
+| `proxmox_lxc_start_after_create` | `true` | No | Start the container after creating it |
+| `proxmox_lxc_clone_source_name` | `""` | If cloning | Name of the container to clone |
+| `proxmox_lxc_clone_node` | *(source node)* | No | Node for the clone; empty uses the source's node |
+| `proxmox_lxc_clone_vmid` | `""` | No | VMID for the clone; empty lets PVE assign one |
+| `proxmox_lxc_clone_hostname` | `""` | If cloning | Hostname for the new container |
+| `proxmox_lxc_clone_type` | `"opportunistic"` | No | `full`, `linked` (needs a template source), or `opportunistic` |
+| `proxmox_lxc_clone_storage` | `""` | If a full clone | Target storage; empty leaves it to PVE |
+| `proxmox_lxc_clone_timeout` | `300` | No | Seconds to wait for the clone |
+| `proxmox_lxc_clone_start_after` | `true` | No | Start the clone after it is created |
+| `proxmox_lxc_target_name` | `""` | If lifecycle | Existing container to start/stop/restart/destroy, looked up by name |
+| `proxmox_lxc_lifecycle_state` | `""` | If lifecycle | `started`, `stopped`, `restarted`, or `absent` |
+| `proxmox_lxc_force_stop` | `false` | No | With `stopped`, power off instead of a graceful shutdown |
+| `proxmox_lxc_purge` | `false` | No | With `absent`, also remove from backup, replication, and HA config |
+| `proxmox_lxc_destroy_unreferenced_disks` | `true` | No | With `absent`, destroy disks not referenced by the config |
+| `proxmox_lxc_lifecycle_timeout` | `300` | No | Seconds to wait for the lifecycle change |
+| `proxmox_lxc_template_source_name` | `""` | If templating | Stopped container to convert into a template |
+| `proxmox_lxc_template_force` | `true` | No | Stop the container first if it is running |
+
+
 ### Connection
 
 Every `proxmox_*` role in this collection uses the same `proxmox_api_*`
 vars — see `collections/infrabase/README.md`. Set them once for the whole
 play/inventory; a VM/CT lives on one node in one cluster, so there's
 nothing role-specific to override here.
+
+The roles hand these to the `community.proxmox` modules through `module_defaults`
+(see `collections/infrabase/README.md`), so tasks here don't repeat them.
 
 ```yaml
 proxmox_api_host: "pve2.example.com"   # any PVE node or the cluster VIP

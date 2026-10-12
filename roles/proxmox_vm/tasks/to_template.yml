@@ -10,18 +10,12 @@
   when: not proxmox_vm_template_source_name
 
 - name: to_template - discover source VM
-  ansible.builtin.include_tasks: discover.yml
+  ansible.builtin.import_tasks: discover.yml
   vars:
     proxmox_vm_discover_name: "{{ proxmox_vm_template_source_name }}"
 
 - name: to_template - convert VM to template
   community.proxmox.proxmox_kvm:
-    api_host:         "{{ proxmox_api_host }}"
-    api_user:         "{{ proxmox_api_user }}"
-    api_password:     "{{ proxmox_api_password | default(omit) }}"
-    api_token_id:     "{{ proxmox_api_token_id | default(omit) }}"
-    api_token_secret: "{{ proxmox_api_token_secret | default(omit) }}"
-    validate_certs:   "{{ proxmox_validate_certs }}"
     vmid:  "{{ proxmox_vm_discovered_vmid }}"
     node:  "{{ proxmox_vm_discovered_node }}"
     state: template

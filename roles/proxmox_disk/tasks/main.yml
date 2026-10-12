@@ -1,24 +1,34 @@
 ---
-- name: proxmox_disk - discover VM in ProxMox
-  import_tasks: discover.yml
-  tags: [proxmox_disk, storage]
+- name: proxmox_disk - run with shared API connection defaults
+  module_defaults:
+    group/community.proxmox.proxmox:
+      api_host: "{{ proxmox_api_host }}"
+      api_user: "{{ proxmox_api_user }}"
+      api_password: "{{ proxmox_api_password | default(omit) }}"
+      api_token_id: "{{ proxmox_api_token_id | default(omit) }}"
+      api_token_secret: "{{ proxmox_api_token_secret | default(omit) }}"
+      validate_certs: "{{ proxmox_validate_certs }}"
+  block:
+    - name: proxmox_disk - discover VM in ProxMox
+      ansible.builtin.import_tasks: discover.yml
+      tags: [proxmox_disk, storage]
 
-- name: proxmox_disk - snapshot current block devices
-  import_tasks: snapshot.yml
-  when: proxmox_disk_state == 'present'
-  tags: [proxmox_disk, storage]
+    - name: proxmox_disk - snapshot current block devices
+      ansible.builtin.import_tasks: snapshot.yml
+      when: proxmox_disk_state == 'present'
+      tags: [proxmox_disk, storage]
 
-- name: proxmox_disk - add disk
-  import_tasks: add.yml
-  when: proxmox_disk_state == 'present'
-  tags: [proxmox_disk, storage]
+    - name: proxmox_disk - add disk
+      ansible.builtin.import_tasks: add.yml
+      when: proxmox_disk_state == 'present'
+      tags: [proxmox_disk, storage]
 
-- name: proxmox_disk - resize disk
-  import_tasks: resize.yml
-  when: proxmox_disk_state == 'resized'
-  tags: [proxmox_disk, storage]
+    - name: proxmox_disk - resize disk
+      ansible.builtin.import_tasks: resize.yml
+      when: proxmox_disk_state == 'resized'
+      tags: [proxmox_disk, storage]
 
-- name: proxmox_disk - detect new block device
-  import_tasks: detect.yml
-  when: proxmox_disk_state == 'present'
-  tags: [proxmox_disk, storage]
+    - name: proxmox_disk - detect new block device
+      ansible.builtin.import_tasks: detect.yml
+      when: proxmox_disk_state == 'present'
+      tags: [proxmox_disk, storage]

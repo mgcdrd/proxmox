@@ -41,12 +41,27 @@ you standardize on tokens for everything else.
 Role Variables
 ---------------
 
+### Variable reference
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `proxmox_snapshot_do_info` | `false` | No | Run the `info` section (tag `info`) |
+| `proxmox_snapshot_do_manage` | `false` | No | Run the `manage` section (tag `manage`) |
+| `proxmox_snapshot_snapshots` | `[]` | If `proxmox_snapshot_do_manage` | Snapshots to create, delete, or roll back; items mirror `community.proxmox.proxmox_snap` |
+| `proxmox_snapshot_info_hostname` | `""` | No | VM name to list snapshots for |
+| `proxmox_snapshot_info_vmid` | `""` | No | VMID to list snapshots for |
+| `proxmox_snapshot_info_snapname` | `""` | No | Specific snapshot to query; empty lists all for the target |
+
+
 ### Connection
 
 Every `proxmox_*` role in this collection uses the same `proxmox_api_*`
 vars — see `collections/infrabase/README.md`. Set them once for the whole
 play/inventory; a VM/CT lives on one node in one cluster, so there's
 nothing role-specific to override here.
+
+The roles hand these to the `community.proxmox` modules through `module_defaults`
+(see `collections/infrabase/README.md`), so tasks here don't repeat them.
 
 ```yaml
 proxmox_api_host: "pve2.example.com"

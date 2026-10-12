@@ -50,12 +50,54 @@ relevant path.
 Role Variables
 ---------------
 
+### Variable reference
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `proxmox_vm_do_info` | `false` | No | Run the `info` section (tag `info`) |
+| `proxmox_vm_do_clone` | `false` | No | Run the `clone` section (tag `clone`) |
+| `proxmox_vm_do_lifecycle` | `false` | No | Run the `lifecycle` section (tag `lifecycle`) |
+| `proxmox_vm_do_template` | `false` | No | Run the `template` section (tag `template`) |
+| `proxmox_vm_clone_source` | `""` | If cloning | Template or VM to clone, by name |
+| `proxmox_vm_name` | `""` | If cloning | Name of the new VM |
+| `proxmox_vm_node` | `""` | If cloning | PVE node to place the clone on |
+| `proxmox_vm_newid` | `""` | No | VMID for the clone; empty lets PVE assign the next free one |
+| `proxmox_vm_full_clone` | `true` | No | Full clone when true; linked clone when false (template source only) |
+| `proxmox_vm_storage` | `""` | No | Target storage for a full clone |
+| `proxmox_vm_format` | `"qcow2"` | No | Disk format for a full clone: `qcow2`, `raw`, or `vmdk` |
+| `proxmox_vm_clone_timeout` | `600` | No | Seconds to wait for the clone |
+| `proxmox_vm_cores` | `2` | No | CPU cores, applied in a follow-up update after the clone |
+| `proxmox_vm_sockets` | `1` | No | CPU sockets |
+| `proxmox_vm_memory` | `2048` | No | Memory in MiB |
+| `proxmox_vm_net0` | `"virtio,bridge=vmbr0"` | No | First NIC definition |
+| `proxmox_vm_agent` | `true` | No | Enable the QEMU guest agent |
+| `proxmox_vm_onboot` | `true` | No | Start the VM on node boot |
+| `proxmox_vm_tags` | `[]` | No | Tags to apply |
+| `proxmox_vm_update_unsafe` | `true` | No | Allow the follow-up update to change net/disk settings, which PVE blocks by default |
+| `proxmox_vm_ipconfig0` | `""` | No | Cloud-init network config (e.g. `ip=10.0.0.50/24,gw=10.0.0.1`); empty skips cloud-init |
+| `proxmox_vm_ciuser` | `""` | No | Cloud-init user |
+| `proxmox_vm_cipassword` | *(`vault_proxmox_vm_cipassword` if defined)* | No | Cloud-init password; use a `vault_` variable |
+| `proxmox_vm_sshkeys` | `""` | No | SSH public key content (not a path) for the cloud-init user |
+| `proxmox_vm_nameservers` | `[]` | No | Cloud-init DNS servers |
+| `proxmox_vm_searchdomains` | `[]` | No | Cloud-init DNS search domains |
+| `proxmox_vm_start_after_clone` | `true` | No | Start the VM after cloning |
+| `proxmox_vm_target_name` | `""` | If lifecycle | Existing VM to start/stop/destroy, looked up by name |
+| `proxmox_vm_lifecycle_state` | `""` | If lifecycle | `started`, `stopped`, or `absent` |
+| `proxmox_vm_force_stop` | `false` | No | Power off instead of a graceful shutdown |
+| `proxmox_vm_destroy_unreferenced_disks` | `true` | No | With `absent`, destroy disks not referenced by the config |
+| `proxmox_vm_lifecycle_timeout` | `300` | No | Seconds to wait for the lifecycle change |
+| `proxmox_vm_template_source_name` | `""` | If templating | Stopped VM to convert into a template |
+
+
 ### Connection
 
 Every `proxmox_*` role in this collection uses the same `proxmox_api_*`
 vars — see `collections/infrabase/README.md`. Set them once for the whole
 play/inventory; a VM/CT lives on one node in one cluster, so there's
 nothing role-specific to override here.
+
+The roles hand these to the `community.proxmox` modules through `module_defaults`
+(see `collections/infrabase/README.md`), so tasks here don't repeat them.
 
 ```yaml
 proxmox_api_host: "pve2.example.com"   # any PVE node or the cluster VIP

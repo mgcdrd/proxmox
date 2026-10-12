@@ -28,6 +28,21 @@ Requirements
 Role Variables
 ---------------
 
+### Variable reference
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `proxmox_guest_exec_vm_name` | *(`proxmox_target_vm_name`, else `inventory_hostname`)* | No | VM to run in; looked up by name unless both `_vmid` and `_node` are set |
+| `proxmox_guest_exec_vmid` | `""` | No | VMID; set with `_node` to skip the by-name lookup |
+| `proxmox_guest_exec_node` | `""` | No | PVE node hosting the VM; set with `_vmid` to skip the lookup |
+| `proxmox_guest_exec_command` | `[]` | Yes | argv list: first element is the executable, the rest are arguments. No shell, so no pipes, redirects, or globbing |
+| `proxmox_guest_exec_input_data` | `""` | No | Data piped to the command's stdin |
+| `proxmox_guest_exec_fail_on_nonzero` | `true` | No | Fail the play when the command exits non-zero |
+| `proxmox_guest_exec_timeout` | `60` | No | Seconds to wait for the command to finish |
+| `proxmox_guest_exec_poll_interval` | `2` | No | Seconds between status polls |
+| `proxmox_guest_exec_no_log` | `true` | No | Suppress request/response logging, since input and output often contain secrets |
+
+
 ```yaml
 # By-name lookup (one API call) unless both of these are set explicitly —
 # set both to skip the lookup, e.g. right after a proxmox_vm clone.

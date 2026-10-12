@@ -71,12 +71,29 @@ proxmox_api_token_secret: "{{ vault_proxmox_api_token_secret }}"
 Role Variables
 ---------------
 
+### Variable reference
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `proxmox_acme_api_password` | `""` | Yes | `root@pam` password; ACME endpoints reject API tokens, so this role does not use the shared `proxmox_api_password` |
+| `proxmox_acme_do_info` | `false` | No | Run the `info` section (tag `info`) |
+| `proxmox_acme_do_account` | `false` | No | Run the `account` section (tag `account`) |
+| `proxmox_acme_do_plugin` | `false` | No | Run the `plugin` section (tag `plugin`) |
+| `proxmox_acme_do_certificate` | `false` | No | Run the `certificate` section (tag `certificate`) |
+| `proxmox_acme_accounts` | `[]` | If `proxmox_acme_do_account` | ACME CA accounts (contact email and TOS); only `contact` can be updated once created |
+| `proxmox_acme_plugins` | `[]` | If `proxmox_acme_do_plugin` | DNS-01 challenge plugins (e.g. Cloudflare) |
+| `proxmox_acme_certificates` | `[]` | If `proxmox_acme_do_certificate` | Per-node domain list plus cert order, renew, or removal in one step |
+
+
 ### Connection
 
 Every `proxmox_*` role in this collection uses the same `proxmox_api_*`
 vars — see `collections/infrabase/README.md`. Set them once for the whole
 play/inventory; a VM/CT lives on one node in one cluster, so there's
 nothing role-specific to override here.
+
+The roles hand these to the `community.proxmox` modules through `module_defaults`
+(see `collections/infrabase/README.md`), so tasks here don't repeat them.
 
 ```yaml
 proxmox_api_host: "pve2.example.com"

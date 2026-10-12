@@ -68,12 +68,31 @@ per-node API tokens rather than one shared password.
 Role Variables
 ---------------
 
+### Variable reference
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `proxmox_cluster_do_info` | `false` | No | Run the `info` section (tag `info`) |
+| `proxmox_cluster_do_create` | `false` | No | Run the `create` section (tag `create`) |
+| `proxmox_cluster_do_join` | `false` | No | Run the `join` section (tag `join`) |
+| `proxmox_cluster_name` | `""` | If `proxmox_cluster_do_create` | Name of the cluster to create, run against the intended master's API |
+| `proxmox_cluster_link0` | `""` | No | Corosync ring0 address |
+| `proxmox_cluster_link1` | `""` | No | Corosync ring1 address |
+| `proxmox_cluster_master_ip` | `""` | If `proxmox_cluster_do_join` | Address of an existing cluster node to join |
+| `proxmox_cluster_master_fingerprint` | `""` | If `proxmox_cluster_do_join` | Master's certificate fingerprint, from `proxmox_cluster_join_facts.cluster_join[0].nodelist[].pve_fp` |
+| `proxmox_cluster_master_api_password` | *(see defaults)* | If `proxmox_cluster_do_join` | Master's API password; set explicitly rather than relying on the module's fallback to `api_password` |
+| `proxmox_cluster_join_nodes` | `[]` | If `proxmox_cluster_do_join` | Nodes to join; each item's `api_host` is the new node's own API |
+
+
 ### Connection
 
 Every `proxmox_*` role in this collection uses the same `proxmox_api_*`
 vars — see `collections/infrabase/README.md`. Set them once for the whole
 play/inventory; a VM/CT lives on one node in one cluster, so there's
 nothing role-specific to override here.
+
+The roles hand these to the `community.proxmox` modules through `module_defaults`
+(see `collections/infrabase/README.md`), so tasks here don't repeat them.
 
 ```yaml
 proxmox_api_host: "pve1.example.com"   # master for create/info; overridden per-item for join

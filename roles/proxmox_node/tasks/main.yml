@@ -1,20 +1,30 @@
 ---
-- name: proxmox_node - list nodes with detailed status
-  ansible.builtin.include_tasks: info.yml
-  when: proxmox_node_do_info | bool
-  tags: [proxmox_node, info]
+- name: proxmox_node - run with shared API connection defaults
+  module_defaults:
+    group/community.proxmox.proxmox:
+      api_host: "{{ proxmox_api_host }}"
+      api_user: "{{ proxmox_api_user }}"
+      api_password: "{{ proxmox_api_password | default(omit) }}"
+      api_token_id: "{{ proxmox_api_token_id | default(omit) }}"
+      api_token_secret: "{{ proxmox_api_token_secret | default(omit) }}"
+      validate_certs: "{{ proxmox_validate_certs }}"
+  block:
+    - name: proxmox_node - list nodes with detailed status
+      ansible.builtin.import_tasks: info.yml
+      when: proxmox_node_do_info | bool
+      tags: [proxmox_node, info]
 
-- name: proxmox_node - set node power state
-  ansible.builtin.include_tasks: power.yml
-  when: proxmox_node_do_power | bool
-  tags: [proxmox_node, power]
+    - name: proxmox_node - set node power state
+      ansible.builtin.import_tasks: power.yml
+      when: proxmox_node_do_power | bool
+      tags: [proxmox_node, power]
 
-- name: proxmox_node - update node certificates/DNS/subscription
-  ansible.builtin.include_tasks: config.yml
-  when: proxmox_node_do_config | bool
-  tags: [proxmox_node, config]
+    - name: proxmox_node - update node certificates/DNS/subscription
+      ansible.builtin.import_tasks: config.yml
+      when: proxmox_node_do_config | bool
+      tags: [proxmox_node, config]
 
-- name: proxmox_node - list/poll tasks
-  ansible.builtin.include_tasks: task.yml
-  when: proxmox_node_do_task | bool
-  tags: [proxmox_node, task]
+    - name: proxmox_node - list/poll tasks
+      ansible.builtin.import_tasks: task.yml
+      when: proxmox_node_do_task | bool
+      tags: [proxmox_node, task]

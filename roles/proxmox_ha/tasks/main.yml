@@ -1,20 +1,30 @@
 ---
-- name: proxmox_ha - query HA rules
-  ansible.builtin.include_tasks: info.yml
-  when: proxmox_ha_do_info | bool
-  tags: [proxmox_ha, info]
+- name: proxmox_ha - run with shared API connection defaults
+  module_defaults:
+    group/community.proxmox.proxmox:
+      api_host: "{{ proxmox_api_host }}"
+      api_user: "{{ proxmox_api_user }}"
+      api_password: "{{ proxmox_api_password | default(omit) }}"
+      api_token_id: "{{ proxmox_api_token_id | default(omit) }}"
+      api_token_secret: "{{ proxmox_api_token_secret | default(omit) }}"
+      validate_certs: "{{ proxmox_validate_certs }}"
+  block:
+    - name: proxmox_ha - query HA rules
+      ansible.builtin.import_tasks: info.yml
+      when: proxmox_ha_do_info | bool
+      tags: [proxmox_ha, info]
 
-- name: proxmox_ha - manage legacy HA groups
-  ansible.builtin.include_tasks: group.yml
-  when: proxmox_ha_do_group | bool
-  tags: [proxmox_ha, group]
+    - name: proxmox_ha - manage legacy HA groups
+      ansible.builtin.import_tasks: group.yml
+      when: proxmox_ha_do_group | bool
+      tags: [proxmox_ha, group]
 
-- name: proxmox_ha - manage HA resources
-  ansible.builtin.include_tasks: resource.yml
-  when: proxmox_ha_do_resource | bool
-  tags: [proxmox_ha, resource]
+    - name: proxmox_ha - manage HA resources
+      ansible.builtin.import_tasks: resource.yml
+      when: proxmox_ha_do_resource | bool
+      tags: [proxmox_ha, resource]
 
-- name: proxmox_ha - manage HA rules
-  ansible.builtin.include_tasks: rule.yml
-  when: proxmox_ha_do_rule | bool
-  tags: [proxmox_ha, rule]
+    - name: proxmox_ha - manage HA rules
+      ansible.builtin.import_tasks: rule.yml
+      when: proxmox_ha_do_rule | bool
+      tags: [proxmox_ha, rule]

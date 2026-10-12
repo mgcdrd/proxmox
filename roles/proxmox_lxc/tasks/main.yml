@@ -1,25 +1,35 @@
 ---
-- name: proxmox_lxc - gather cluster/node/storage info
-  ansible.builtin.include_tasks: info.yml
-  when: proxmox_lxc_do_info | bool
-  tags: [proxmox_lxc, info]
+- name: proxmox_lxc - run with shared API connection defaults
+  module_defaults:
+    group/community.proxmox.proxmox:
+      api_host: "{{ proxmox_api_host }}"
+      api_user: "{{ proxmox_api_user }}"
+      api_password: "{{ proxmox_api_password | default(omit) }}"
+      api_token_id: "{{ proxmox_api_token_id | default(omit) }}"
+      api_token_secret: "{{ proxmox_api_token_secret | default(omit) }}"
+      validate_certs: "{{ proxmox_validate_certs }}"
+  block:
+    - name: proxmox_lxc - gather cluster/node/storage info
+      ansible.builtin.import_tasks: info.yml
+      when: proxmox_lxc_do_info | bool
+      tags: [proxmox_lxc, info]
 
-- name: proxmox_lxc - create container from template
-  ansible.builtin.include_tasks: create.yml
-  when: proxmox_lxc_do_create | bool
-  tags: [proxmox_lxc, create]
+    - name: proxmox_lxc - create container from template
+      ansible.builtin.import_tasks: create.yml
+      when: proxmox_lxc_do_create | bool
+      tags: [proxmox_lxc, create]
 
-- name: proxmox_lxc - clone container from an existing container
-  ansible.builtin.include_tasks: clone.yml
-  when: proxmox_lxc_do_clone | bool
-  tags: [proxmox_lxc, clone]
+    - name: proxmox_lxc - clone container from an existing container
+      ansible.builtin.import_tasks: clone.yml
+      when: proxmox_lxc_do_clone | bool
+      tags: [proxmox_lxc, clone]
 
-- name: proxmox_lxc - start/stop/restart/destroy container
-  ansible.builtin.include_tasks: lifecycle.yml
-  when: proxmox_lxc_do_lifecycle | bool
-  tags: [proxmox_lxc, lifecycle]
+    - name: proxmox_lxc - start/stop/restart/destroy container
+      ansible.builtin.import_tasks: lifecycle.yml
+      when: proxmox_lxc_do_lifecycle | bool
+      tags: [proxmox_lxc, lifecycle]
 
-- name: proxmox_lxc - convert container to template
-  ansible.builtin.include_tasks: to_template.yml
-  when: proxmox_lxc_do_template | bool
-  tags: [proxmox_lxc, template]
+    - name: proxmox_lxc - convert container to template
+      ansible.builtin.import_tasks: to_template.yml
+      when: proxmox_lxc_do_template | bool
+      tags: [proxmox_lxc, template]

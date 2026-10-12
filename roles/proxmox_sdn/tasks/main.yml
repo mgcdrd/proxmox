@@ -1,20 +1,30 @@
 ---
-- name: proxmox_sdn - list zones/vnets
-  ansible.builtin.include_tasks: info.yml
-  when: proxmox_sdn_do_info | bool
-  tags: [proxmox_sdn, info]
+- name: proxmox_sdn - run with shared API connection defaults
+  module_defaults:
+    group/community.proxmox.proxmox:
+      api_host: "{{ proxmox_api_host }}"
+      api_user: "{{ proxmox_api_user }}"
+      api_password: "{{ proxmox_api_password | default(omit) }}"
+      api_token_id: "{{ proxmox_api_token_id | default(omit) }}"
+      api_token_secret: "{{ proxmox_api_token_secret | default(omit) }}"
+      validate_certs: "{{ proxmox_validate_certs }}"
+  block:
+    - name: proxmox_sdn - list zones/vnets
+      ansible.builtin.import_tasks: info.yml
+      when: proxmox_sdn_do_info | bool
+      tags: [proxmox_sdn, info]
 
-- name: proxmox_sdn - manage SDN zones
-  ansible.builtin.include_tasks: zone.yml
-  when: proxmox_sdn_do_zone | bool
-  tags: [proxmox_sdn, zone]
+    - name: proxmox_sdn - manage SDN zones
+      ansible.builtin.import_tasks: zone.yml
+      when: proxmox_sdn_do_zone | bool
+      tags: [proxmox_sdn, zone]
 
-- name: proxmox_sdn - manage SDN vnets
-  ansible.builtin.include_tasks: vnet.yml
-  when: proxmox_sdn_do_vnet | bool
-  tags: [proxmox_sdn, vnet]
+    - name: proxmox_sdn - manage SDN vnets
+      ansible.builtin.import_tasks: vnet.yml
+      when: proxmox_sdn_do_vnet | bool
+      tags: [proxmox_sdn, vnet]
 
-- name: proxmox_sdn - manage SDN subnets
-  ansible.builtin.include_tasks: subnet.yml
-  when: proxmox_sdn_do_subnet | bool
-  tags: [proxmox_sdn, subnet]
+    - name: proxmox_sdn - manage SDN subnets
+      ansible.builtin.import_tasks: subnet.yml
+      when: proxmox_sdn_do_subnet | bool
+      tags: [proxmox_sdn, subnet]

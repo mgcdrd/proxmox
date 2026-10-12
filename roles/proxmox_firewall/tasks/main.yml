@@ -1,35 +1,45 @@
 ---
-- name: proxmox_firewall - query rules/groups/aliases/ipsets/node options
-  ansible.builtin.include_tasks: info.yml
-  when: proxmox_firewall_do_info | bool
-  tags: [proxmox_firewall, info]
+- name: proxmox_firewall - run with shared API connection defaults
+  module_defaults:
+    group/community.proxmox.proxmox:
+      api_host: "{{ proxmox_api_host }}"
+      api_user: "{{ proxmox_api_user }}"
+      api_password: "{{ proxmox_api_password | default(omit) }}"
+      api_token_id: "{{ proxmox_api_token_id | default(omit) }}"
+      api_token_secret: "{{ proxmox_api_token_secret | default(omit) }}"
+      validate_certs: "{{ proxmox_validate_certs }}"
+  block:
+    - name: proxmox_firewall - query rules/groups/aliases/ipsets/node options
+      ansible.builtin.include_tasks: info.yml
+      when: proxmox_firewall_do_info | bool
+      tags: [proxmox_firewall, info]
 
-- name: proxmox_firewall - set cluster-wide firewall options
-  ansible.builtin.include_tasks: cluster_options.yml
-  when: proxmox_firewall_do_cluster_options | bool
-  tags: [proxmox_firewall, cluster_options]
+    - name: proxmox_firewall - set cluster-wide firewall options
+      ansible.builtin.include_tasks: cluster_options.yml
+      when: proxmox_firewall_do_cluster_options | bool
+      tags: [proxmox_firewall, cluster_options]
 
-- name: proxmox_firewall - set node-level firewall options
-  ansible.builtin.include_tasks: node_options.yml
-  when: proxmox_firewall_do_node_options | bool
-  tags: [proxmox_firewall, node_options]
+    - name: proxmox_firewall - set node-level firewall options
+      ansible.builtin.include_tasks: node_options.yml
+      when: proxmox_firewall_do_node_options | bool
+      tags: [proxmox_firewall, node_options]
 
-- name: proxmox_firewall - manage firewall rules
-  ansible.builtin.include_tasks: rule.yml
-  when: proxmox_firewall_do_rule | bool
-  tags: [proxmox_firewall, rule]
+    - name: proxmox_firewall - manage firewall rules
+      ansible.builtin.import_tasks: rule.yml
+      when: proxmox_firewall_do_rule | bool
+      tags: [proxmox_firewall, rule]
 
-- name: proxmox_firewall - manage security groups
-  ansible.builtin.include_tasks: group.yml
-  when: proxmox_firewall_do_group | bool
-  tags: [proxmox_firewall, group]
+    - name: proxmox_firewall - manage security groups
+      ansible.builtin.import_tasks: group.yml
+      when: proxmox_firewall_do_group | bool
+      tags: [proxmox_firewall, group]
 
-- name: proxmox_firewall - manage aliases
-  ansible.builtin.include_tasks: alias.yml
-  when: proxmox_firewall_do_alias | bool
-  tags: [proxmox_firewall, alias]
+    - name: proxmox_firewall - manage aliases
+      ansible.builtin.import_tasks: alias.yml
+      when: proxmox_firewall_do_alias | bool
+      tags: [proxmox_firewall, alias]
 
-- name: proxmox_firewall - manage IP sets
-  ansible.builtin.include_tasks: ipset.yml
-  when: proxmox_firewall_do_ipset | bool
-  tags: [proxmox_firewall, ipset]
+    - name: proxmox_firewall - manage IP sets
+      ansible.builtin.import_tasks: ipset.yml
+      when: proxmox_firewall_do_ipset | bool
+      tags: [proxmox_firewall, ipset]

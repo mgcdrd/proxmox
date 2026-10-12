@@ -51,12 +51,26 @@ proxmox_api_password: "{{ vault_proxmox_api_password }}"
 Role Variables
 ---------------
 
+### Variable reference
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `proxmox_vm_manage_vm_name` | *(`proxmox_target_vm_name`, else `inventory_hostname`)* | No | VM to act on; looked up by name |
+| `proxmox_vm_manage_vmid` | `""` | No | VMID; set to skip the by-name lookup for the NIC and snapshot sub-roles |
+| `proxmox_vm_manage_disks` | `[]` | No | Disks to add or resize, one entry each (fields below) |
+| `proxmox_vm_manage_nics` | `[]` | No | NICs to manage; passed through to `proxmox_nic_interfaces` |
+| `proxmox_vm_manage_snapshots` | `[]` | No | Snapshots to manage; passed through to `proxmox_snapshot_snapshots` |
+
+
 ### Connection
 
 Every `proxmox_*` role in this collection uses the same `proxmox_api_*`
 vars — see `collections/infrabase/README.md`. Set them once for the whole
 play/inventory; a VM/CT lives on one node in one cluster, so there's
 nothing role-specific to override here.
+
+The roles it calls hand these to the `community.proxmox` modules through
+`module_defaults` (see `collections/infrabase/README.md`).
 
 ```yaml
 proxmox_api_host: "pve2.example.com"

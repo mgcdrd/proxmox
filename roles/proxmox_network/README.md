@@ -42,12 +42,31 @@ Unset `vault_*` variables resolve to `omit`. Grant the token `Sys.Modify` on
 Role Variables
 ---------------
 
+### Variable reference
+
+| Variable | Default | Required | Description |
+|---|---|---|---|
+| `proxmox_network_do_info` | `false` | No | Run the `info` section (tag `info`) |
+| `proxmox_network_do_iface` | `false` | No | Run the `iface` section (tag `iface`) |
+| `proxmox_network_do_apply` | `false` | No | Run the `apply` section (tag `apply`) |
+| `proxmox_network_info_node` | `""` | If `proxmox_network_do_info` | Node to read interfaces from |
+| `proxmox_network_info_iface` | `""` | No | Interface to read; empty returns all |
+| `proxmox_network_info_iface_type` | `""` | No | Interface type to filter on; empty returns all |
+| `proxmox_network_info_check_changes` | `false` | No | Report pending (unapplied) changes instead of live config |
+| `proxmox_network_node` | `""` | No | Default `node` for every item in `proxmox_network_interfaces` |
+| `proxmox_network_interfaces` | `[]` | If `proxmox_network_do_iface` | Interfaces to create, modify, or delete (bridges, bonds, VLANs, OVS); items mirror `community.proxmox.proxmox_node_network` |
+| `proxmox_network_apply_node` | `""` | If `proxmox_network_do_apply` | Node whose staged changes are applied live (`/etc/network/interfaces.new` to live) |
+
+
 ### Connection
 
 Every `proxmox_*` role in this collection uses the same `proxmox_api_*`
 vars — see `collections/infrabase/README.md`. Set them once for the whole
 play/inventory; a VM/CT lives on one node in one cluster, so there's
 nothing role-specific to override here.
+
+The roles hand these to the `community.proxmox` modules through `module_defaults`
+(see `collections/infrabase/README.md`), so tasks here don't repeat them.
 
 ```yaml
 proxmox_api_host: "pve2.example.com"

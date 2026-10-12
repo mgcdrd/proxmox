@@ -1,10 +1,20 @@
 ---
-- name: proxmox_storage - list configured storage
-  ansible.builtin.include_tasks: info.yml
-  when: proxmox_storage_do_info | bool
-  tags: [proxmox_storage, info]
+- name: proxmox_storage - run with shared API connection defaults
+  module_defaults:
+    group/community.proxmox.proxmox:
+      api_host: "{{ proxmox_api_host }}"
+      api_user: "{{ proxmox_api_user }}"
+      api_password: "{{ proxmox_api_password | default(omit) }}"
+      api_token_id: "{{ proxmox_api_token_id | default(omit) }}"
+      api_token_secret: "{{ proxmox_api_token_secret | default(omit) }}"
+      validate_certs: "{{ proxmox_validate_certs }}"
+  block:
+    - name: proxmox_storage - list configured storage
+      ansible.builtin.import_tasks: info.yml
+      when: proxmox_storage_do_info | bool
+      tags: [proxmox_storage, info]
 
-- name: proxmox_storage - create/delete storage definitions
-  ansible.builtin.include_tasks: manage.yml
-  when: proxmox_storage_do_manage | bool
-  tags: [proxmox_storage, manage]
+    - name: proxmox_storage - create/delete storage definitions
+      ansible.builtin.import_tasks: manage.yml
+      when: proxmox_storage_do_manage | bool
+      tags: [proxmox_storage, manage]
