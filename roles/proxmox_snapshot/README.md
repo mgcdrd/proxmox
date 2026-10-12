@@ -56,12 +56,12 @@ Role Variables
 ### Connection
 
 Every `proxmox_*` role in this collection uses the same `proxmox_api_*`
-vars — see `collections/infrabase/README.md`. Set them once for the whole
+vars — see `README.md`. Set them once for the whole
 play/inventory; a VM/CT lives on one node in one cluster, so there's
 nothing role-specific to override here.
 
 The roles hand these to the `community.proxmox` modules through `module_defaults`
-(see `collections/infrabase/README.md`), so tasks here don't repeat them.
+(see `README.md`), so tasks here don't repeat them.
 
 ```yaml
 proxmox_api_host: "pve2.example.com"
@@ -126,7 +126,7 @@ Example Playbook — pre-change snapshot with retention
   hosts: localhost
   gather_facts: false
   roles:
-    - role: mgcdrd.infrabase.proxmox_snapshot
+    - role: mgcdrd.proxmox.proxmox_snapshot
       vars:
         proxmox_api_host:         "pve2.example.com"
         proxmox_api_token_id:     "{{ vault_proxmox_api_token_id }}"
@@ -147,7 +147,7 @@ Example Playbook — rollback
   hosts: localhost
   gather_facts: false
   roles:
-    - role: mgcdrd.infrabase.proxmox_snapshot
+    - role: mgcdrd.proxmox.proxmox_snapshot
       vars:
         proxmox_api_host:         "pve2.example.com"
         proxmox_api_token_id:     "{{ vault_proxmox_api_token_id }}"

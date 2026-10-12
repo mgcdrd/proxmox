@@ -3,7 +3,7 @@ proxmox_network
 
 Manages node-level physical network configuration in ProxMox VE — bridges,
 bonds, VLANs, and Open vSwitch interfaces — via the PVE REST API. Distinct
-from `mgcdrd.infrabase.proxmox_sdn`, which manages PVE's Software-Defined
+from `mgcdrd.proxmox.proxmox_sdn`, which manages PVE's Software-Defined
 Networking layer (zones/vnets/subnets) on top of this physical layer.
 
 Tested on: any Ansible controller against a ProxMox VE 8.x cluster.
@@ -61,12 +61,12 @@ Role Variables
 ### Connection
 
 Every `proxmox_*` role in this collection uses the same `proxmox_api_*`
-vars — see `collections/infrabase/README.md`. Set them once for the whole
+vars — see `README.md`. Set them once for the whole
 play/inventory; a VM/CT lives on one node in one cluster, so there's
 nothing role-specific to override here.
 
 The roles hand these to the `community.proxmox` modules through `module_defaults`
-(see `collections/infrabase/README.md`), so tasks here don't repeat them.
+(see `README.md`), so tasks here don't repeat them.
 
 ```yaml
 proxmox_api_host: "pve2.example.com"
@@ -170,7 +170,7 @@ Example Playbook — create a bridge and bond, then apply
   hosts: localhost
   gather_facts: false
   roles:
-    - role: mgcdrd.infrabase.proxmox_network
+    - role: mgcdrd.proxmox.proxmox_network
       vars:
         proxmox_api_host:         "pve2.example.com"
         proxmox_api_token_id:     "{{ vault_proxmox_api_token_id }}"

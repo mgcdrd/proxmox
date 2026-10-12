@@ -1,6 +1,6 @@
 ---
 # ---- ProxMox API connection ----
-# Uses the shared proxmox_api_* vars — see collections/infrabase/README.md.
+# Uses the shared proxmox_api_* vars — see README.md.
 
 # ---- VM targeting ----
 # The role looks up the VM by name to discover its VMID automatically.

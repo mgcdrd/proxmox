@@ -1,0 +1,17 @@
+namespace: mgcdrd
+name: proxmox
+version: 0.1.0
+readme: README.md
+authors:
+- mgcdrd mgcdryad@example.com
+
+description: |-
+  Proxmox VE management over the API (community.proxmox): guests (VM, LXC,
+  disk, NIC, snapshot, guest exec) and platform (node, cluster, network,
+  SDN, storage, firewall, access, ACME, Ceph, HA, pool, backup).
+
+license:
+- GPL-3.0-or-later
+
+repository: https://github.com/mgcdrd/proxmox
+build_ignore: []

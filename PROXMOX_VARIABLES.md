@@ -1,5 +1,5 @@
-Master Variables List for the infrabase Proxmox roles
-=====================================================
+Master Variables List for the proxmox collection
+====================================================
 
 Every `proxmox_*` role talks to the PVE API through `community.proxmox`
 (>= 2.0.0). Connection variables are shared by all of them and set once
@@ -7,7 +7,9 @@ Every `proxmox_*` role talks to the PVE API through `community.proxmox`
 independent sections, switched on with `<role>_do_<section>` gates and run
 by tag, so one role can be applied piecemeal.
 
-Roles: [access](#proxmox_access) · [acme](#proxmox_acme) · [backup](#proxmox_backup) · [ceph](#proxmox_ceph) · [cluster](#proxmox_cluster) · [disk](#proxmox_disk) · [firewall](#proxmox_firewall) · [guest_exec](#proxmox_guest_exec) · [ha](#proxmox_ha) · [lxc](#proxmox_lxc) · [network](#proxmox_network) · [nic](#proxmox_nic) · [node](#proxmox_node) · [pool](#proxmox_pool) · [sdn](#proxmox_sdn) · [snapshot](#proxmox_snapshot) · [storage](#proxmox_storage) · [vm](#proxmox_vm) · [vm_manage](#proxmox_vm_manage)
+Guests: [vm](#proxmox_vm) · [lxc](#proxmox_lxc) · [disk](#proxmox_disk) · [nic](#proxmox_nic) · [snapshot](#proxmox_snapshot) · [guest_exec](#proxmox_guest_exec) · [vm_manage](#proxmox_vm_manage)
+
+Cluster and platform: [node](#proxmox_node) · [cluster](#proxmox_cluster) · [network](#proxmox_network) · [sdn](#proxmox_sdn) · [storage](#proxmox_storage) · [firewall](#proxmox_firewall) · [access](#proxmox_access) · [acme](#proxmox_acme) · [ceph](#proxmox_ceph) · [ha](#proxmox_ha) · [pool](#proxmox_pool) · [backup](#proxmox_backup)
 
 
 Shared connection variables
@@ -38,7 +40,7 @@ proxmox_access
 
 PVE users, groups, IAM roles, ACLs, authentication realms (LDAP/AD/OpenID) and realm sync.
 
-[`mgcdrd.infrabase.proxmox_access`](roles/proxmox_access/README.md)
+[`mgcdrd.proxmox.proxmox_access`](roles/proxmox_access/README.md)
 
 **Execution gates**
 
@@ -71,7 +73,7 @@ proxmox_acme
 
 ACME accounts, DNS-01 challenge plugins, and per-node domain/certificate ordering.
 
-[`mgcdrd.infrabase.proxmox_acme`](roles/proxmox_acme/README.md)
+[`mgcdrd.proxmox.proxmox_acme`](roles/proxmox_acme/README.md)
 
 **Execution gates**
 
@@ -99,7 +101,7 @@ proxmox_backup
 
 Scheduled backup jobs, per-VM job membership, and on-demand backups.
 
-[`mgcdrd.infrabase.proxmox_backup`](roles/proxmox_backup/README.md)
+[`mgcdrd.proxmox.proxmox_backup`](roles/proxmox_backup/README.md)
 
 **Execution gates**
 
@@ -146,7 +148,7 @@ proxmox_ceph
 
 Ceph monitors, managers, metadata servers, OSDs and pools through the PVE API.
 
-[`mgcdrd.infrabase.proxmox_ceph`](roles/proxmox_ceph/README.md)
+[`mgcdrd.proxmox.proxmox_ceph`](roles/proxmox_ceph/README.md)
 
 **Execution gates**
 
@@ -174,7 +176,7 @@ proxmox_cluster
 
 Cluster status, cluster creation, and node join over the PVE API (no `pvecm`).
 
-[`mgcdrd.infrabase.proxmox_cluster`](roles/proxmox_cluster/README.md)
+[`mgcdrd.proxmox.proxmox_cluster`](roles/proxmox_cluster/README.md)
 
 **Execution gates**
 
@@ -204,7 +206,7 @@ proxmox_disk
 
 Adds or resizes a VM disk in PVE and reports the new guest block device.
 
-[`mgcdrd.infrabase.proxmox_disk`](roles/proxmox_disk/README.md)
+[`mgcdrd.proxmox.proxmox_disk`](roles/proxmox_disk/README.md)
 
 | Name                       | Default                                                  | Required | Purpose |
 |----------------------------|----------------------------------------------------------|----------|---------|
@@ -223,7 +225,7 @@ proxmox_firewall
 
 Cluster and node firewall options, rules, security groups, aliases and IP sets.
 
-[`mgcdrd.infrabase.proxmox_firewall`](roles/proxmox_firewall/README.md)
+[`mgcdrd.proxmox.proxmox_firewall`](roles/proxmox_firewall/README.md)
 
 **Execution gates**
 
@@ -277,7 +279,7 @@ proxmox_guest_exec
 
 Runs a command inside a VM through the QEMU guest agent (raw API, token auth only).
 
-[`mgcdrd.infrabase.proxmox_guest_exec`](roles/proxmox_guest_exec/README.md)
+[`mgcdrd.proxmox.proxmox_guest_exec`](roles/proxmox_guest_exec/README.md)
 
 | Name                               | Default                                                  | Required | Purpose |
 |------------------------------------|----------------------------------------------------------|----------|---------|
@@ -299,7 +301,7 @@ proxmox_ha
 
 HA groups (legacy), HA resources, and PVE 9+ node/resource-affinity rules.
 
-[`mgcdrd.infrabase.proxmox_ha`](roles/proxmox_ha/README.md)
+[`mgcdrd.proxmox.proxmox_ha`](roles/proxmox_ha/README.md)
 
 **Execution gates**
 
@@ -327,7 +329,7 @@ proxmox_lxc
 
 LXC containers: create from a template, clone, lifecycle, and convert to a template.
 
-[`mgcdrd.infrabase.proxmox_lxc`](roles/proxmox_lxc/README.md)
+[`mgcdrd.proxmox.proxmox_lxc`](roles/proxmox_lxc/README.md)
 
 **Execution gates**
 
@@ -399,7 +401,7 @@ proxmox_network
 
 Node network interfaces (bridges, bonds, VLANs) and applying staged changes.
 
-[`mgcdrd.infrabase.proxmox_network`](roles/proxmox_network/README.md)
+[`mgcdrd.proxmox.proxmox_network`](roles/proxmox_network/README.md)
 
 **Execution gates**
 
@@ -427,7 +429,7 @@ proxmox_nic
 
 Adds, changes or removes VM network interfaces (`net0`-`net31`).
 
-[`mgcdrd.infrabase.proxmox_nic`](roles/proxmox_nic/README.md)
+[`mgcdrd.proxmox.proxmox_nic`](roles/proxmox_nic/README.md)
 
 | Name                  | Default                                                  | Required | Purpose |
 |-----------------------|----------------------------------------------------------|----------|---------|
@@ -443,7 +445,7 @@ proxmox_node
 
 Node status, power state, certificates/DNS/subscription, and task listing.
 
-[`mgcdrd.infrabase.proxmox_node`](roles/proxmox_node/README.md)
+[`mgcdrd.proxmox.proxmox_node`](roles/proxmox_node/README.md)
 
 **Execution gates**
 
@@ -479,7 +481,7 @@ proxmox_pool
 
 Resource pools and their VM/storage membership.
 
-[`mgcdrd.infrabase.proxmox_pool`](roles/proxmox_pool/README.md)
+[`mgcdrd.proxmox.proxmox_pool`](roles/proxmox_pool/README.md)
 
 **Execution gates**
 
@@ -505,7 +507,7 @@ proxmox_sdn
 
 SDN zones, VNets and subnets. Changes apply immediately; there is no separate apply step.
 
-[`mgcdrd.infrabase.proxmox_sdn`](roles/proxmox_sdn/README.md)
+[`mgcdrd.proxmox.proxmox_sdn`](roles/proxmox_sdn/README.md)
 
 **Execution gates**
 
@@ -532,7 +534,7 @@ proxmox_snapshot
 
 Create, delete and roll back snapshots for VMs and containers.
 
-[`mgcdrd.infrabase.proxmox_snapshot`](roles/proxmox_snapshot/README.md)
+[`mgcdrd.proxmox.proxmox_snapshot`](roles/proxmox_snapshot/README.md)
 
 **Execution gates**
 
@@ -556,7 +558,7 @@ proxmox_storage
 
 Storage backend definitions (create/delete only; no update path).
 
-[`mgcdrd.infrabase.proxmox_storage`](roles/proxmox_storage/README.md)
+[`mgcdrd.proxmox.proxmox_storage`](roles/proxmox_storage/README.md)
 
 **Execution gates**
 
@@ -594,7 +596,7 @@ proxmox_vm
 
 QEMU VMs: clone from a template, lifecycle, and convert to a template.
 
-[`mgcdrd.infrabase.proxmox_vm`](roles/proxmox_vm/README.md)
+[`mgcdrd.proxmox.proxmox_vm`](roles/proxmox_vm/README.md)
 
 **Execution gates**
 
@@ -662,7 +664,7 @@ proxmox_vm_manage
 
 Wrapper that applies disks, NICs and snapshots to one VM by calling `proxmox_disk`, `proxmox_nic` and `proxmox_snapshot`.
 
-[`mgcdrd.infrabase.proxmox_vm_manage`](roles/proxmox_vm_manage/README.md)
+[`mgcdrd.proxmox.proxmox_vm_manage`](roles/proxmox_vm_manage/README.md)
 
 | Name                          | Default                                                  | Required | Purpose |
 |-------------------------------|----------------------------------------------------------|----------|---------|

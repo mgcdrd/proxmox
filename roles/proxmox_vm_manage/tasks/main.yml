@@ -1,7 +1,7 @@
 ---
 - name: proxmox_vm_manage - add/resize disks
   ansible.builtin.include_role:
-    name: mgcdrd.infrabase.proxmox_disk
+    name: mgcdrd.proxmox.proxmox_disk
   loop: "{{ proxmox_vm_manage_disks }}"
   loop_control:
     loop_var: _proxmox_vm_manage_disk
@@ -15,7 +15,7 @@
 
 - name: proxmox_vm_manage - configure NICs
   ansible.builtin.include_role:
-    name: mgcdrd.infrabase.proxmox_nic
+    name: mgcdrd.proxmox.proxmox_nic
   vars:
     proxmox_nic_vm_name:          "{{ proxmox_vm_manage_vm_name }}"
     proxmox_nic_vmid:             "{{ proxmox_vm_manage_vmid }}"
@@ -25,7 +25,7 @@
 
 - name: proxmox_vm_manage - create/delete/rollback snapshots
   ansible.builtin.include_role:
-    name: mgcdrd.infrabase.proxmox_snapshot
+    name: mgcdrd.proxmox.proxmox_snapshot
   vars:
     proxmox_snapshot_do_manage:        true
     proxmox_snapshot_snapshots:        "{{ proxmox_vm_manage_snapshots }}"

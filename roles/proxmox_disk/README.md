@@ -71,12 +71,12 @@ Role Variables
 ### Connection
 
 Every `proxmox_*` role in this collection uses the same `proxmox_api_*`
-vars — see `collections/infrabase/README.md`. Set them once for the whole
+vars — see `README.md`. Set them once for the whole
 play/inventory; a VM/CT lives on one node in one cluster, so there's
 nothing role-specific to override here.
 
 The roles hand these to the `community.proxmox` modules through `module_defaults`
-(see `collections/infrabase/README.md`), so tasks here don't repeat them.
+(see `README.md`), so tasks here don't repeat them.
 
 ```yaml
 proxmox_api_host: "pve2.example.com"
@@ -159,7 +159,7 @@ Example Playbook — add disk and set up LVM
   gather_facts: true
   become: true
   roles:
-    - role: mgcdrd.infrabase.proxmox_disk
+    - role: mgcdrd.proxmox.proxmox_disk
       vars:
         proxmox_api_host: "pve2.example.com"
         proxmox_api_password: "{{ vault_pve_password }}"
@@ -202,7 +202,7 @@ reports its full size; it doesn't rescan for you.
   hosts: foreman
   gather_facts: false
   roles:
-    - role: mgcdrd.infrabase.proxmox_disk
+    - role: mgcdrd.proxmox.proxmox_disk
       vars:
         proxmox_api_host: "pve2.example.com"
         proxmox_api_password: "{{ vault_pve_password }}"

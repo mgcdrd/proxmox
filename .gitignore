@@ -1,0 +1,6 @@
+CLAUDE.md
+*.pyc
+__pycache__/
+.venv/
+.env
+*.retry

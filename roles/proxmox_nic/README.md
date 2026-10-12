@@ -3,7 +3,7 @@ proxmox_nic
 
 Adds, updates, or removes VM network interfaces (`net0`–`net31`) via the PVE
 API using `community.proxmox.proxmox_nic`. Complements
-`mgcdrd.infrabase.proxmox_vm`, which only sets `net0` once, at clone time —
+`mgcdrd.proxmox.proxmox_vm`, which only sets `net0` once, at clone time —
 this role owns every NIC change after that: additional interfaces, VLAN/
 bridge/model changes on an existing NIC, and deletion.
 
@@ -59,12 +59,12 @@ Role Variables
 ### Connection
 
 Every `proxmox_*` role in this collection uses the same `proxmox_api_*`
-vars — see `collections/infrabase/README.md`. Set them once for the whole
+vars — see `README.md`. Set them once for the whole
 play/inventory; a VM/CT lives on one node in one cluster, so there's
 nothing role-specific to override here.
 
 The roles hand these to the `community.proxmox` modules through `module_defaults`
-(see `collections/infrabase/README.md`), so tasks here don't repeat them.
+(see `README.md`), so tasks here don't repeat them.
 
 ```yaml
 proxmox_api_host: "pve2.example.com"   # any PVE node or the cluster VIP
@@ -141,7 +141,7 @@ Example Playbook — add a NIC to an existing VM
   hosts: localhost
   gather_facts: false
   roles:
-    - role: mgcdrd.infrabase.proxmox_nic
+    - role: mgcdrd.proxmox.proxmox_nic
       vars:
         proxmox_api_host:         "pve2.example.com"
         proxmox_api_token_id:     "{{ vault_proxmox_api_token_id }}"
@@ -161,7 +161,7 @@ Example Playbook — chained right after a proxmox_vm clone
   hosts: localhost
   gather_facts: false
   roles:
-    - role: mgcdrd.infrabase.proxmox_vm
+    - role: mgcdrd.proxmox.proxmox_vm
       vars:
         proxmox_vm_do_clone: true
         proxmox_vm_clone_source: "rocky9-template"
@@ -169,7 +169,7 @@ Example Playbook — chained right after a proxmox_vm clone
         proxmox_vm_node: "pve2"
         proxmox_vm_storage: "truenas"
 
-    - role: mgcdrd.infrabase.proxmox_nic
+    - role: mgcdrd.proxmox.proxmox_nic
       vars:
         proxmox_api_host:         "pve2.example.com"
         proxmox_api_token_id:     "{{ vault_proxmox_api_token_id }}"
@@ -192,7 +192,7 @@ Example Playbook — remove a NIC
   hosts: localhost
   gather_facts: false
   roles:
-    - role: mgcdrd.infrabase.proxmox_nic
+    - role: mgcdrd.proxmox.proxmox_nic
       vars:
         proxmox_api_host:         "pve2.example.com"
         proxmox_api_token_id:     "{{ vault_proxmox_api_token_id }}"

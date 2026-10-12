@@ -1,7 +1,7 @@
 ---
 # ---- ProxMox API connection ----
 # api_host/validate_certs use the shared proxmox_api_* vars — see
-# collections/infrabase/README.md. Auth is NOT shared for this role's
+# README.md. Auth is NOT shared for this role's
 # account/plugin/certificate tasks (info.yml is fine with the shared vars,
 # it's read-only).
 #

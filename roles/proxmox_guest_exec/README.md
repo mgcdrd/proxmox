@@ -10,7 +10,7 @@ whatever), as long as `qemu-guest-agent` is installed and running (see
 No `community.proxmox` module wraps the guest agent exec endpoints
 (confirmed against the 2.x module list) — this role talks to
 `/nodes/{node}/qemu/{vmid}/agent/exec` and `/agent/exec-status` directly,
-the same raw-`uri` + `PVEAPIToken` pattern `mgcdrd.infrabase.proxmox_backup`
+the same raw-`uri` + `PVEAPIToken` pattern `mgcdrd.proxmox.proxmox_backup`
 uses for `/cluster/backup`.
 
 Requirements
@@ -89,7 +89,7 @@ no SSH connection to the VM at any point:
   tasks:
     - name: Write the netplan file
       ansible.builtin.include_role:
-        name: mgcdrd.infrabase.proxmox_guest_exec
+        name: mgcdrd.proxmox.proxmox_guest_exec
       vars:
         proxmox_guest_exec_vm_name: kc1.example.com
         proxmox_guest_exec_command:
@@ -99,7 +99,7 @@ no SSH connection to the VM at any point:
 
     - name: Apply it
       ansible.builtin.include_role:
-        name: mgcdrd.infrabase.proxmox_guest_exec
+        name: mgcdrd.proxmox.proxmox_guest_exec
       vars:
         proxmox_guest_exec_vm_name: kc1.example.com
         proxmox_guest_exec_command:

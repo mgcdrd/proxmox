@@ -65,12 +65,12 @@ Role Variables
 ### Connection
 
 Every `proxmox_*` role in this collection uses the same `proxmox_api_*`
-vars — see `collections/infrabase/README.md`. Set them once for the whole
+vars — see `README.md`. Set them once for the whole
 play/inventory; a VM/CT lives on one node in one cluster, so there's
 nothing role-specific to override here.
 
 The roles it calls hand these to the `community.proxmox` modules through
-`module_defaults` (see `collections/infrabase/README.md`).
+`module_defaults` (see `README.md`).
 
 ```yaml
 proxmox_api_host: "pve2.example.com"
@@ -101,11 +101,11 @@ proxmox_vm_manage_disks:
 
 `state: resized` is PVE-side only — it doesn't touch the guest. Run
 `mgcdrd.infrabase.lvm2` in a separate play afterward to grow the
-PV/LV/filesystem; see `mgcdrd.infrabase.proxmox_disk`'s README for the
+PV/LV/filesystem; see `mgcdrd.proxmox.proxmox_disk`'s README for the
 full example (rescan + `partprobe` before `lvm2` will see the new size).
 
 One full `proxmox_disk` invocation (including its own by-name VM discovery)
-runs per entry. See `mgcdrd.infrabase.proxmox_disk`'s README for the complete
+runs per entry. See `mgcdrd.proxmox.proxmox_disk`'s README for the complete
 key reference.
 
 ### NICs
@@ -119,7 +119,7 @@ proxmox_vm_manage_nics:
 ```
 
 Passed straight through to `proxmox_nic_interfaces` — see
-`mgcdrd.infrabase.proxmox_nic`'s README for the complete key reference
+`mgcdrd.proxmox.proxmox_nic`'s README for the complete key reference
 (`model`, `firewall`, `mtu`, `mac`).
 
 ### Snapshots
@@ -133,7 +133,7 @@ proxmox_vm_manage_snapshots:
 ```
 
 Passed straight through to `proxmox_snapshot_snapshots` — see
-`mgcdrd.infrabase.proxmox_snapshot`'s README for the complete key reference
+`mgcdrd.proxmox.proxmox_snapshot`'s README for the complete key reference
 (`vmstate`, `force`, `unbind`). `snapname` has no safe default — always set
 it explicitly.
 
@@ -156,10 +156,10 @@ Each section runs only if its list has entries — no separate on/off toggle,
 populating the list is the opt-in:
 
 1. **Disks** — loops over `proxmox_vm_manage_disks`, calling
-   `mgcdrd.infrabase.proxmox_disk` once per entry via `include_role`.
-2. **NICs** — calls `mgcdrd.infrabase.proxmox_nic` once, passing the whole
+   `mgcdrd.proxmox.proxmox_disk` once per entry via `include_role`.
+2. **NICs** — calls `mgcdrd.proxmox.proxmox_nic` once, passing the whole
    `proxmox_vm_manage_nics` list through as `proxmox_nic_interfaces`.
-3. **Snapshots** — calls `mgcdrd.infrabase.proxmox_snapshot` once, passing
+3. **Snapshots** — calls `mgcdrd.proxmox.proxmox_snapshot` once, passing
    the whole `proxmox_vm_manage_snapshots` list through as
    `proxmox_snapshot_snapshots` (with `proxmox_snapshot_do_manage: true`
    forced on).
@@ -174,7 +174,7 @@ Example Playbook — add a disk, a NIC, and a pre-change snapshot
   gather_facts: true
   become: true
   roles:
-    - role: mgcdrd.infrabase.proxmox_vm_manage
+    - role: mgcdrd.proxmox.proxmox_vm_manage
       vars:
         proxmox_api_host:         "pve2.example.com"
         proxmox_api_token_id:     "{{ vault_proxmox_api_token_id }}"
@@ -203,7 +203,7 @@ Example Playbook — snapshot-only rollback
   hosts: localhost
   gather_facts: false
   roles:
-    - role: mgcdrd.infrabase.proxmox_vm_manage
+    - role: mgcdrd.proxmox.proxmox_vm_manage
       vars:
         proxmox_api_host:         "pve2.example.com"
         proxmox_api_token_id:     "{{ vault_proxmox_api_token_id }}"
@@ -225,7 +225,7 @@ Notes
   than "run if the list is non-empty."
 - **No `proxmox_vm` (clone/lifecycle/template) coverage**: this role is for
   changes *after* a VM exists. Cloning/creating a VM is
-  `mgcdrd.infrabase.proxmox_vm`.
+  `mgcdrd.proxmox.proxmox_vm`.
 - **`hosts:` target**: the disk section needs to run against the VM's own
   inventory entry (`become`/`gather_facts` for on-guest block device
   detection); the NIC/snapshot sections are pure API calls that
