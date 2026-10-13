@@ -14,23 +14,22 @@ Collection coverage — read before using
 -------------------------------------------
 
 `community.proxmox`'s firewall support is **mid-refactor** as of collection
-2.0.0/2.1.0-dev (tracked upstream in
+2.1.0 (tracked upstream in
 [issue #300](https://github.com/ansible-collections/community.proxmox/issues/300)).
 What exists today:
 
 | Module | Covers | Released? |
 |---|---|---|
-| `proxmox_cluster_firewall_options` | Cluster enable, default policies, log ratelimit | Yes (2.0.0) |
-| `proxmox_node_firewall_options` / `_info` | Per-node enable, logging, protocol hardening | Yes (2.0.0) |
+| `proxmox_cluster_firewall_options` | Cluster enable, default policies, log ratelimit | Yes (2.1.0) |
+| `proxmox_node_firewall_options` / `_info` | Per-node enable, logging, protocol hardening | Yes (2.1.0) |
 | `proxmox_firewall` / `_info` | Rules (any level), security-group create/delete (name only), aliases, IP sets | Yes (1.4.0) |
-| `proxmox_cluster_firewall_security_group` | Security-group **rule content** | **No — targeted for 2.1.0** |
+| `proxmox_cluster_firewall_security_group` | Security-group **rule content** | Yes (2.1.0), not used by this role yet |
 
 **Gaps not covered by this role, because no module exists for them:**
 
 - **Security-group rule content** — this role can create/delete named
   security groups, but cannot populate what's inside them. That needs
-  `proxmox_cluster_firewall_security_group`, unreleased. Once it ships,
-  expect this role to gain a `group_rule` section and change how `group`
+  `proxmox_cluster_firewall_security_group` (released in 2.1.0, not wired in yet). Expect this role to gain a `group_rule` section and change how `group`
   idempotency works (index-based rule sync, not `pos`-based).
 - **Per-guest firewall *options*** (`enable`, `policy_in`/`policy_out`,
   `dhcp`, `macfilter`, `ipfilter`, `ndp`, `radv`, per-guest log levels — the
@@ -45,7 +44,7 @@ Requirements
 ------------
 
 - The Ansible controller must be able to reach the PVE API host on port 8006.
-- `community.proxmox` collection installed (`>= 2.0.0`).
+- `community.proxmox` collection installed (`>= 2.1.0` — the `*_firewall_options` modules were renamed from `proxmox_cluster_firewall`/`proxmox_node_firewall`/`proxmox_node_firewall_info` in 2.1.0; the old names are deprecated and go away in 3.0.0).
 - **`proxmoxer >= 2.3` and `requests` must be installed on the Ansible
   controller**:
   - RPM: `pip3 install 'proxmoxer>=2.3' requests`
@@ -111,10 +110,7 @@ play/inventory; a VM/CT lives on one node in one cluster, so there's
 nothing role-specific to override here.
 
 The roles hand these to the `community.proxmox` modules through `module_defaults`
-(see `README.md`), so tasks here don't repeat them. The three tasks calling
-`proxmox_cluster_firewall_options`, `proxmox_node_firewall_options` and
-`proxmox_node_firewall_options_info` still pass them explicitly: those modules
-are not in the `community.proxmox` 2.0.0 action group (or module list).
+(see `README.md`), so tasks here don't repeat them.
 
 ```yaml
 proxmox_api_host: "pve2.example.com"

@@ -2,7 +2,7 @@ Master Variables List for the proxmox collection
 ====================================================
 
 Every `proxmox_*` role talks to the PVE API through `community.proxmox`
-(>= 2.0.0). Connection variables are shared by all of them and set once
+(>= 2.1.0). Connection variables are shared by all of them and set once
 (see **Shared connection variables**). Each role is then split into
 independent sections, switched on with `<role>_do_<section>` gates and run
 by tag, so one role can be applied piecemeal.
@@ -267,11 +267,11 @@ Cluster and node firewall options, rules, security groups, aliases and IP sets.
 |-------------------------------|---------|------------------------------------------|---------|
 | proxmox_firewall_node_options | `[]`    | If `proxmox_firewall_do_node_options`    | Per node: `node_name`, `state`, `log_level_in`, `nosmurfs`, `protection_synflood`, and related options |
 | proxmox_firewall_rules        | `[]`    | If `proxmox_firewall_do_rule`            | Per level (`cluster`/`group`/`vnet`/`node`/`vm`, plus `vmid` etc.): `state` and a `rules` list of `type`, `action`, `pos` (required), `proto`, `dport`, `log`, `enable` |
-| proxmox_firewall_groups       | `[]`    | If `proxmox_firewall_do_group`           | `group`, `comment`, `state`. Name only; rule content needs a module not yet in 2.0.0 |
+| proxmox_firewall_groups       | `[]`    | If `proxmox_firewall_do_group`           | `group`, `comment`, `state`. Name only; rule content needs `proxmox_cluster_firewall_security_group`, not wired in yet |
 | proxmox_firewall_aliases      | `[]`    | If `proxmox_firewall_do_alias`           | `name`, `cidr`, `state` |
 | proxmox_firewall_ipsets       | `[]`    | If `proxmox_firewall_do_ipset`           | `name`, `comment`, `state`, `cidrs` (list of `cidr` + `comment`) |
 
-Note: `info`, `cluster_options` and `node_options` call modules that are not in `community.proxmox` 2.0.0 (`proxmox_cluster_firewall_options`, `proxmox_node_firewall_options`, `proxmox_node_firewall_options_info`) and will fail until that is resolved.
+Note: `cluster_options`, `node_options` and the node part of `info` need `community.proxmox` >= 2.1.0 (the `*_firewall_options` module names).
 
 
 proxmox_guest_exec

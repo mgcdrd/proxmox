@@ -10,17 +10,17 @@
       validate_certs: "{{ proxmox_validate_certs }}"
   block:
     - name: proxmox_firewall - query rules/groups/aliases/ipsets/node options
-      ansible.builtin.include_tasks: info.yml
+      ansible.builtin.import_tasks: info.yml
       when: proxmox_firewall_do_info | bool
       tags: [proxmox_firewall, info]
 
     - name: proxmox_firewall - set cluster-wide firewall options
-      ansible.builtin.include_tasks: cluster_options.yml
+      ansible.builtin.import_tasks: cluster_options.yml
       when: proxmox_firewall_do_cluster_options | bool
       tags: [proxmox_firewall, cluster_options]
 
     - name: proxmox_firewall - set node-level firewall options
-      ansible.builtin.include_tasks: node_options.yml
+      ansible.builtin.import_tasks: node_options.yml
       when: proxmox_firewall_do_node_options | bool
       tags: [proxmox_firewall, node_options]
 

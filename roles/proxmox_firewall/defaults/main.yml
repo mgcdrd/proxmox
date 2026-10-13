@@ -78,9 +78,8 @@ proxmox_firewall_rules: []
 # group — create/delete named security groups (NAME ONLY — no rule content)
 # ==============================================================
 # Rule content inside a security group requires
-# community.proxmox.proxmox_cluster_firewall_security_group, which is
-# unreleased as of collection 2.0.0 (targeted for 2.1.0) — not usable from
-# this role yet. See README.
+# community.proxmox.proxmox_cluster_firewall_security_group, released in
+# collection 2.1.0 but not wired into this role yet. See README.
 proxmox_firewall_groups: []
 # proxmox_firewall_groups:
 #   - group: webservers

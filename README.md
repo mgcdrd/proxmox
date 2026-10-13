@@ -1,6 +1,6 @@
 # mgcdrd.proxmox
 
-Proxmox VE management over the API, built on `community.proxmox` (>= 2.0.0).
+Proxmox VE management over the API, built on `community.proxmox` (>= 2.1.0).
 Every role runs against the PVE API from the controller (`delegate_to: localhost`);
 none of them need SSH to the hypervisor. The exception is `proxmox_disk`, which
 also looks inside the guest for the new block device.
@@ -52,7 +52,7 @@ collections:
     version: v0.1.0
 
   - name: community.proxmox
-    version: ">=2.0.0"
+    version: ">=2.1.0"
 ```
 
 Requires Ansible core >= 2.17 and the `proxmoxer` and `requests` Python libraries on the controller.
@@ -95,7 +95,7 @@ with its own `proxmox_api_host` etc., not a per-role variable — see
 Each role passes these to the `community.proxmox` modules once, through a
 `module_defaults` block on the `community.proxmox.proxmox` action group in
 its `tasks/main.yml`, so the individual tasks don't repeat them. This needs
-`community.proxmox` >= 2.0.0. A task can still set its own `api_*` argument
+`community.proxmox` >= 2.1.0. A task can still set its own `api_*` argument
 to override the default (`proxmox_cluster` join does this per node).
 `ansible.builtin.uri` tasks (`proxmox_backup` jobs, `proxmox_guest_exec`)
 aren't covered by the action group and read `proxmox_api_*` directly.

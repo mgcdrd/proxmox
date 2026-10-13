@@ -6,8 +6,8 @@
 
 # Creates/deletes the named security group only — no rule content. Rule
 # content inside a security group requires
-# community.proxmox.proxmox_cluster_firewall_security_group, unreleased as
-# of collection 2.0.0 (targeted for 2.1.0) — see README.
+# community.proxmox.proxmox_cluster_firewall_security_group (2.1.0+), not
+# wired in yet — see README.
 - name: group - create/delete security groups
   community.proxmox.proxmox_firewall:
     group_conf: true
