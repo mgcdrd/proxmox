@@ -49,7 +49,7 @@ collections:
   - name: mgcdrd.proxmox
     source: https://github.com/mgcdrd/proxmox.git
     type: git
-    version: v0.1.0
+    version: v0.1.1
 
   - name: community.proxmox
     version: ">=2.1.0"

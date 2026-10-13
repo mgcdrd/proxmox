@@ -235,7 +235,7 @@ Cluster and node firewall options, rules, security groups, aliases and IP sets.
 | proxmox_firewall_do_cluster_options | `false` | No       | Cluster-wide enable/policy/log rate (tag `cluster_options`) |
 | proxmox_firewall_do_node_options    | `false` | No       | Per-node options (tag `node_options`) |
 | proxmox_firewall_do_rule            | `false` | No       | Firewall rules (tag `rule`) |
-| proxmox_firewall_do_group           | `false` | No       | Security groups, name only (tag `group`) |
+| proxmox_firewall_do_group           | `false` | No       | Security groups and their rules (tag `group`) |
 | proxmox_firewall_do_alias           | `false` | No       | Aliases (tag `alias`) |
 | proxmox_firewall_do_ipset           | `false` | No       | IP sets (tag `ipset`) |
 
@@ -267,7 +267,8 @@ Cluster and node firewall options, rules, security groups, aliases and IP sets.
 |-------------------------------|---------|------------------------------------------|---------|
 | proxmox_firewall_node_options | `[]`    | If `proxmox_firewall_do_node_options`    | Per node: `node_name`, `state`, `log_level_in`, `nosmurfs`, `protection_synflood`, and related options |
 | proxmox_firewall_rules        | `[]`    | If `proxmox_firewall_do_rule`            | Per level (`cluster`/`group`/`vnet`/`node`/`vm`, plus `vmid` etc.): `state` and a `rules` list of `type`, `action`, `pos` (required), `proto`, `dport`, `log`, `enable` |
-| proxmox_firewall_groups       | `[]`    | If `proxmox_firewall_do_group`           | `group`, `comment`, `state`. Name only; rule content needs `proxmox_cluster_firewall_security_group`, not wired in yet |
+| proxmox_firewall_groups       | `[]`    | If `proxmox_firewall_do_group`           | `group`, `comment`, `state`, optional ordered `rules` (full ruleset when set), `purge_omitted_rule_fields` |
+| proxmox_firewall_group_purge_omitted_rule_fields | `true` | No | Clear (`true`) or keep (`false`) rule fields left out of a group rule entry; per-group override via `purge_omitted_rule_fields` |
 | proxmox_firewall_aliases      | `[]`    | If `proxmox_firewall_do_alias`           | `name`, `cidr`, `state` |
 | proxmox_firewall_ipsets       | `[]`    | If `proxmox_firewall_do_ipset`           | `name`, `comment`, `state`, `cidrs` (list of `cidr` + `comment`) |
 

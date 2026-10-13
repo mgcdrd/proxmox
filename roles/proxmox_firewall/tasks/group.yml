@@ -4,16 +4,15 @@
     msg: "proxmox_firewall_groups must be a non-empty list, and each item needs a 'group' key."
   when: proxmox_firewall_groups | length == 0
 
-# Creates/deletes the named security group only — no rule content. Rule
-# content inside a security group requires
-# community.proxmox.proxmox_cluster_firewall_security_group (2.1.0+), not
-# wired in yet — see README.
-- name: group - create/delete security groups
-  community.proxmox.proxmox_firewall:
-    group_conf: true
-    group:   "{{ item.group }}"
+# Rule content is synced by index: rules[0] is position 0, and so on. Omit
+# `rules` on an item to manage only the group and its comment.
+- name: group - manage security groups and their rules
+  community.proxmox.proxmox_cluster_firewall_security_group:
+    name:    "{{ item.group }}"
     comment: "{{ item.comment | default(omit) }}"
     state:   "{{ item.state | default('present') }}"
+    rules:   "{{ item.rules | default(omit) }}"
+    purge_omitted_rule_fields: "{{ item.purge_omitted_rule_fields | default(proxmox_firewall_group_purge_omitted_rule_fields) }}"
   loop: "{{ proxmox_firewall_groups }}"
   loop_control:
     label: "{{ item.group }}"

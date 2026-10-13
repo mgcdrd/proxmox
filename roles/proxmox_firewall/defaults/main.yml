@@ -75,16 +75,27 @@ proxmox_firewall_rules: []
 #         dport: "80"
 
 # ==============================================================
-# group — create/delete named security groups (NAME ONLY — no rule content)
+# group — security groups, optionally with their rule content
 # ==============================================================
-# Rule content inside a security group requires
-# community.proxmox.proxmox_cluster_firewall_security_group, released in
-# collection 2.1.0 but not wired into this role yet. See README.
+# Needs community.proxmox >= 2.1.0. Omit `rules` on an item to manage only the
+# group and its comment. When `rules` is set it is the group's full ordered
+# ruleset (index 0 = position 0); [] removes every rule.
 proxmox_firewall_groups: []
 # proxmox_firewall_groups:
 #   - group: webservers
 #     comment: "Web tier"
 #     state: present
+#     rules:
+#       - type: in
+#         action: ACCEPT
+#         proto: tcp
+#         dport: "443"
+#         comment: "HTTPS"
+
+# true = each rule entry is the complete desired state of its position (fields
+# left out are removed). false = left-out fields are kept from the existing
+# rule. Overridable per group item. true matches community.proxmox 3.0.0.
+proxmox_firewall_group_purge_omitted_rule_fields: true
 
 # ==============================================================
 # alias — cluster or VM-level firewall aliases

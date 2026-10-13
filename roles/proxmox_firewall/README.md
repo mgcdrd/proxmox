@@ -22,15 +22,11 @@ What exists today:
 |---|---|---|
 | `proxmox_cluster_firewall_options` | Cluster enable, default policies, log ratelimit | Yes (2.1.0) |
 | `proxmox_node_firewall_options` / `_info` | Per-node enable, logging, protocol hardening | Yes (2.1.0) |
-| `proxmox_firewall` / `_info` | Rules (any level), security-group create/delete (name only), aliases, IP sets | Yes (1.4.0) |
-| `proxmox_cluster_firewall_security_group` | Security-group **rule content** | Yes (2.1.0), not used by this role yet |
+| `proxmox_firewall` / `_info` | Rules (any level), aliases, IP sets | Yes (1.4.0) |
+| `proxmox_cluster_firewall_security_group` | Security groups and their rule content | Yes (2.1.0) |
 
 **Gaps not covered by this role, because no module exists for them:**
 
-- **Security-group rule content** — this role can create/delete named
-  security groups, but cannot populate what's inside them. That needs
-  `proxmox_cluster_firewall_security_group` (released in 2.1.0, not wired in yet). Expect this role to gain a `group_rule` section and change how `group`
-  idempotency works (index-based rule sync, not `pos`-based).
 - **Per-guest firewall *options*** (`enable`, `policy_in`/`policy_out`,
   `dhcp`, `macfilter`, `ipfilter`, `ndp`, `radv`, per-guest log levels — the
   `/nodes/{node}/{qemu|lxc}/{vmid}/firewall/options` endpoint) — distinct
@@ -97,7 +93,7 @@ Role Variables
 | `proxmox_firewall_cluster_log_ratelimit` | `{}` | No | Firewall log rate-limit settings (`enable`, `rate`, `burst`) |
 | `proxmox_firewall_node_options` | `[]` | If `proxmox_firewall_do_node_options` | Per-node firewall enable, logging, and protocol hardening |
 | `proxmox_firewall_rules` | `[]` | If `proxmox_firewall_do_rule` | Rules at cluster, group, vnet, node, or VM level; the module has no check/diff mode |
-| `proxmox_firewall_groups` | `[]` | If `proxmox_firewall_do_group` | Security groups, name only (rule content inside a group is not managed here) |
+| `proxmox_firewall_groups` | `[]` | If `proxmox_firewall_do_group` | Security groups, with optional ordered `rules` per group |
 | `proxmox_firewall_aliases` | `[]` | If `proxmox_firewall_do_alias` | Cluster or VM-level aliases |
 | `proxmox_firewall_ipsets` | `[]` | If `proxmox_firewall_do_ipset` | Cluster-level IP sets |
 
@@ -124,11 +120,11 @@ proxmox_api_host: "pve2.example.com"
 | `proxmox_firewall_do_cluster_options` | `false` | `cluster_options` | Cluster-wide firewall enable/policy |
 | `proxmox_firewall_do_node_options` | `false` | `node_options` | Per-node firewall options |
 | `proxmox_firewall_do_rule` | `false` | `rule` | Manage firewall rules |
-| `proxmox_firewall_do_group` | `false` | `group` | Create/delete security groups (name only) |
+| `proxmox_firewall_do_group` | `false` | `group` | Manage security groups and their rule content |
 | `proxmox_firewall_do_alias` | `false` | `alias` | Manage aliases |
 | `proxmox_firewall_do_ipset` | `false` | `ipset` | Manage IP sets |
 
-**`rule`/`group`/`alias`/`ipset` do not support `--check`** (the underlying
+**`rule`/`alias`/`ipset` do not support `--check`** (the underlying
 `proxmox_firewall` module declares no check_mode support). `cluster_options`
 and `node_options` support full check mode.
 
@@ -225,9 +221,23 @@ proxmox_firewall_groups:
   - group: webservers
     comment: "Web tier"
     state: present
+    rules:                      # optional; omit to manage only the group
+      - type: in
+        action: ACCEPT
+        proto: tcp
+        dport: "443"
+        comment: "HTTPS"
 ```
 
-Name/comment only — see Gaps above for rule content.
+When `rules` is set it is the group's full ordered ruleset (index 0 is
+position 0), so the list is the source of truth — anything not in it is
+removed; `rules: []` empties the group. Rule keys: `type`, `action`,
+`comment`, `source`, `dest`, `proto`, `sport`, `dport`, `iface`, `macro`,
+`icmp_type`, `log`, `enabled`. `proxmox_firewall_group_purge_omitted_rule_fields`
+(default `true`, overridable per group via `purge_omitted_rule_fields`) decides
+whether a field left out of a rule entry is cleared or kept on update.
+Reference the group from a cluster/node/VM rule with `type: group`,
+`action: <group name>`. Unlike `rule`, this section supports `--check`.
 
 ### alias
 
